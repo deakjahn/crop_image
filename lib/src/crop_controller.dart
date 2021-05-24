@@ -8,7 +8,7 @@ import 'package:meta/meta.dart';
 
 /// A controller to control the functionality of [CropImage].
 class CropController extends ValueNotifier<_CropControllerValue> {
-  /// Aspect ratio of the image.
+  /// Aspect ratio of the image (width / height).
   ///
   /// The [crop] rectangle will be adjusted to fit this ratio.
   double? get aspectRatio => value.aspectRatio;
