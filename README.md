@@ -44,18 +44,18 @@ CropImage(
 ## Setting up
 
 Using a controller is optional, if you don't provide your own, the widget will create one and use it internally.
-Without a controller, you can handle the [onCrop] event and keep track of the changing crop selection of the user.
-When using a controller, you don't need to use [onCrop], you can simply read out the crop values any time,
+Without a controller, you can handle the `onCrop` event and keep track of the changing crop selection of the user.
+When using a controller, you don't need to use `onCrop`, you can simply read out the crop values any time,
 also converted to pixels rather than percentage.
 
-The controller also allows you to change both the [aspectRatio] and the [crop] rectangle programmatically:
+The controller also allows you to change both the `aspectRatio` and the `crop` rectangle programmatically:
 
 ```dart
 controller.aspectRatio = 16.0 / 9.0;
 controller.crop = Rect.fromLTRB(0.05, 0.05, 0.95, 0.95);
 ```
 
-Initial values for [aspectRatio] and [defaultCrop] can be provided on the controller.
+Initial values for `aspectRatio` and `defaultCrop` can be provided on the controller.
 
 ```dart
 final controller = CropController(
@@ -71,7 +71,7 @@ is the crop rectangle in relative terms, all four values of the [Rect] normalize
 (1 meaning full width and height), so basically in percentage. The controller also has a [cropSize] property
 that maps the crop rectangle to the actual pixels of the bitmap.
 
-The widget does not crop the original bitmap directly but its [CropController] provides two convenience functions
+The widget does not crop the original bitmap directly but its `CropController` provides two convenience functions
 to do so if required:
 
 ```dart
@@ -79,11 +79,11 @@ ui.Image bitmap = await controller.croppedBitmap();
 Image image = await controller.croppedImage();
 ```
 
-If you want to create an [Image] with additional settings (eg. different [Image.fit]), replicate the functionality of
-[croppedImage()] for yourself. You can use the [UiImageProvider] image provider exposed from the package.
+If you want to create an `Image` with additional settings (eg. different `Image.fit`), replicate the functionality of
+`croppedImage()` for yourself. You can use the `UiImageProvider` image provider exposed from the package.
 
 ## Known problems
 
-[croppedBitmap()] – and consequently, [croppedImage()] – result in an exception on Flutter Web with the HTML web renderer.
-The culprit is [Picture.toImage()] that stopped working some time ago. Try the `-dev` channel or use CanvasKit
+`croppedBitmap()` – and consequently, `croppedImage()` – result in an exception on Flutter Web with the HTML web renderer.
+The culprit is `Picture.toImage()` that stopped working some time ago. Try the `-dev` channel or use CanvasKit
 for the web renderer (which is much better than HTML, anyway).
