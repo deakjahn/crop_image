@@ -50,13 +50,6 @@ Without a controller, you can handle the `onCrop` event and keep track of the ch
 When using a controller, you don't need to use `onCrop`, you can simply read out the crop values any time,
 also converted to pixels rather than percentage.
 
-The controller also allows you to change both the `aspectRatio` and the `crop` rectangle programmatically:
-
-```dart
-controller.aspectRatio = 16.0 / 9.0;
-controller.crop = Rect.fromLTRB(0.05, 0.05, 0.95, 0.95);
-```
-
 Initial values for `aspectRatio` and `defaultCrop` can be provided on the controller.
 
 ```dart
@@ -64,6 +57,13 @@ final controller = CropController(
   aspectRatio: 16.0 / 9.0,
   defaultCrop: Rect.fromLTRB(0.05, 0.05, 0.95, 0.95);
 );
+```
+
+The controller also allows you to change both the `aspectRatio` and the `crop` rectangle programmatically:
+
+```dart
+controller.aspectRatio = 16.0 / 9.0;
+controller.crop = Rect.fromLTRB(0.05, 0.05, 0.95, 0.95);
 ```
 
 ## Using the result
