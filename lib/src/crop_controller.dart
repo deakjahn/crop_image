@@ -58,6 +58,21 @@ class CropController extends ValueNotifier<_CropControllerValue> {
   ///  * [crop], which represents the same rectangle in percentage.
   Rect get cropSize => value.crop.multiply(_bitmapSize);
 
+  /// Set the crop rectangle of the image (pixels).
+  ///
+  /// [left], [right], [top] and [bottom] are in pixels.
+  ///
+  /// See also:
+  ///
+  ///  * [crop], which represents the same rectangle in percentage.
+  set cropSize(Rect newCropSize) {
+    if (value.aspectRatio != null)
+      value = value.copyWith(crop: _adjustRatio(newCropSize.divide(_bitmapSize), value.aspectRatio!));
+    else
+      value = value.copyWith(crop: newCropSize.divide(_bitmapSize));
+    notifyListeners();
+  }
+
   late ui.Image _bitmap;
   late Size _bitmapSize;
 
