@@ -1,0 +1,29 @@
+name: crop_image_example
+description: Example for crop_image.
+version: 1.0.0+1
+homepage: https://github.com/deakjahn/crop_image
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  pedantic: ^1.11.0
+
+  crop_image:
+    path: ../
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/08272011229.jpg
