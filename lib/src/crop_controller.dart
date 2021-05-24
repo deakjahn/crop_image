@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
+/// A controller to control the functionality of [CropImage].
 class CropController extends ValueNotifier<_CropControllerValue> {
   /// Aspect ratio of the image.
+  ///
+  /// The [crop] rectangle will be adjusted to fit this ratio.
   double? get aspectRatio => value.aspectRatio;
 
-  /// Set the aspect ratio of the image.
-  ///
-  /// Note that the [crop] rectangle will be adjusted to fit that ratio.
   set aspectRatio(double? newAspectRatio) {
     if (newAspectRatio != null)
       value = value.copyWith(aspectRatio: newAspectRatio, crop: _adjustRatio(value.crop, newAspectRatio));
@@ -26,21 +26,13 @@ class CropController extends ValueNotifier<_CropControllerValue> {
   /// [left] and [right] are normalized between 0 and 1 (full width).
   /// [top] and [bottom] are normalized between 0 and 1 (full height).
   ///
+  /// If the [aspectRatio] was specified, the rectangle will be adjusted to fit that ratio.
+  ///
   /// See also:
   ///
   ///  * [cropSize], which represents the same rectangle in pixels.
   Rect get crop => value.crop;
 
-  /// Set the crop rectangle of the image (percentage).
-  ///
-  /// [left] and [right] are normalized between 0 and 1 (full width).
-  /// [top] and [bottom] are normalized between 0 and 1 (full height).
-  ///
-  /// Note that if the [aspectRatio] was specified, the rectangle will be adjusted to fit that ratio.
-  ///
-  /// See also:
-  ///
-  ///  * [cropSize], which represents the same rectangle in pixels.
   set crop(Rect newCrop) {
     if (value.aspectRatio != null)
       value = value.copyWith(crop: _adjustRatio(newCrop, value.aspectRatio!));
@@ -53,18 +45,13 @@ class CropController extends ValueNotifier<_CropControllerValue> {
   ///
   /// [left], [right], [top] and [bottom] are in pixels.
   ///
+  /// If the [aspectRatio] was specified, the rectangle will be adjusted to fit that ratio.
+  ///
   /// See also:
   ///
   ///  * [crop], which represents the same rectangle in percentage.
   Rect get cropSize => value.crop.multiply(_bitmapSize);
 
-  /// Set the crop rectangle of the image (pixels).
-  ///
-  /// [left], [right], [top] and [bottom] are in pixels.
-  ///
-  /// See also:
-  ///
-  ///  * [crop], which represents the same rectangle in percentage.
   set cropSize(Rect newCropSize) {
     if (value.aspectRatio != null)
       value = value.copyWith(crop: _adjustRatio(newCropSize.divide(_bitmapSize), value.aspectRatio!));
@@ -127,6 +114,10 @@ class CropController extends ValueNotifier<_CropControllerValue> {
     return Rect.fromLTRB(left, top, right, bottom);
   }
 
+  /// Returns the bitmap cropped with the current crop rectangle.
+  ///
+  /// You can provide the [quality] used in the resizing operation.
+  /// Returns an [ui.Image] asynchronously.
   Future<ui.Image> croppedBitmap({ui.FilterQuality quality = FilterQuality.high}) async {
     final pictureRecorder = ui.PictureRecorder();
     Canvas(pictureRecorder).drawImageRect(
@@ -139,6 +130,10 @@ class CropController extends ValueNotifier<_CropControllerValue> {
     return await pictureRecorder.endRecording().toImage(cropSize.width.round(), cropSize.height.round());
   }
 
+  /// Returns the image cropped with the current crop rectangle.
+  ///
+  /// You can provide the [quality] used in the resizing operation.
+  /// Returns an [Image] asynchronously.
   Future<Image> croppedImage({ui.FilterQuality quality = FilterQuality.high}) async {
     return Image(
       image: UiImageProvider(await croppedBitmap(quality: quality)),
@@ -171,7 +166,12 @@ class _CropControllerValue {
   int get hashCode => hashValues(aspectRatio.hashCode, crop.hashCode);
 }
 
+/// Provides the given [ui.Image] object as an [Image].
+///
+/// Exposed as a convenience. You don't need to use it unless you want to create your own version
+/// of the [croppedImage()] function of [CropController].
 class UiImageProvider extends ImageProvider<UiImageProvider> {
+  /// The [ui.Image] from which the image will be fetched.
   final ui.Image image;
 
   const UiImageProvider(this.image);
@@ -198,6 +198,7 @@ class UiImageProvider extends ImageProvider<UiImageProvider> {
   int get hashCode => image.hashCode;
 }
 
+@internal
 extension RectExtensions on Rect {
   @internal
   Rect multiply(Size size) => Rect.fromLTRB(

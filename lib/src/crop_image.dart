@@ -3,6 +3,11 @@ import 'package:crop_image/src/crop_grid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+/// Widget to crop images.
+///
+/// See also:
+///
+///  * [CropController] to control the functioning of this widget.
 class CropImage extends StatefulWidget {
   /// Controls the crop values being applied.
   ///
