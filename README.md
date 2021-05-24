@@ -87,3 +87,5 @@ If you want to create an `Image` with additional settings (eg. different `Image.
 `croppedBitmap()` – and consequently, `croppedImage()` – result in an exception on Flutter Web with the HTML web renderer.
 The culprit is `Picture.toImage()` that stopped working some time ago. Try the `-dev` channel or use CanvasKit
 for the web renderer (which is much better than HTML, anyway).
+
+![Screenshot](https://raw.githubusercontent.com/deakjahn/crop_image/master/example/assets/sample.gif "Screenshot")
