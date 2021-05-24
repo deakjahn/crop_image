@@ -20,8 +20,8 @@ CropImage(
   /// Only needed if you expect to make use of its functionality like setting initial values of
   /// [aspectRatio] and [defaultCrop].
   controller: controller,
-  /// The image to be cropped.
-  image: Image.asset('...'), // or [Image.file] or [Image.network] or any other [Image].
+  /// The image to be cropped. Use [Image.file] or [Image.network] or any other [Image].
+  image: Image.asset('...'),
   /// The crop grid color. Defaults to 70% white.
   final Color gridColor: Colors.white;
   /// The size of the corner of the crop grid. Defaults to 25.
