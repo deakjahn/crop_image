@@ -94,24 +94,15 @@ class CropController extends ValueNotifier<_CropControllerValue> {
   CropController.fromValue(_CropControllerValue value) : super(value);
 
   Rect _adjustRatio(Rect rect, double aspectRatio) {
-    var left = rect.left;
-    var top = rect.top;
-    var right = rect.right;
-    var bottom = rect.bottom;
-    final width = (right - left) * _bitmapSize.width;
-    final height = (bottom - top) * _bitmapSize.height;
-
+    final width = rect.width * _bitmapSize.width;
+    final height = rect.height * _bitmapSize.height;
     if (width / height > aspectRatio) {
-      final w = aspectRatio * height / 2 / _bitmapSize.width;
-      left = rect.center.dx - w;
-      right = rect.center.dx + w;
+      final w = height * aspectRatio / _bitmapSize.width;
+      return Rect.fromLTWH(rect.center.dx - w / 2, rect.top, w, rect.height);
     } else {
-      final h = width / aspectRatio / 2 / _bitmapSize.height;
-      top = rect.center.dy - h;
-      bottom = rect.center.dy + h;
+      final h = width / aspectRatio / _bitmapSize.height;
+      return Rect.fromLTWH(rect.left, rect.center.dy - h / 2, rect.width, h);
     }
-
-    return Rect.fromLTRB(left, top, right, bottom);
   }
 
   /// Returns the bitmap cropped with the current crop rectangle.

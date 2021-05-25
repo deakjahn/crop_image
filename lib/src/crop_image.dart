@@ -76,7 +76,11 @@ class CropImage extends StatefulWidget {
     this.alwaysShowThirdLines = false,
     this.onCrop,
     this.minimumImageSize = 100,
-  }) : super(key: key);
+  })  : assert(gridCornerSize > 0, 'gridCornerSize cannot be zero'),
+        assert(gridThinWidth > 0, 'gridThinWidth cannot be zero'),
+        assert(gridThickWidth > 0, 'gridThickWidth cannot be zero'),
+        assert(minimumImageSize > 0, 'minimumImageSize cannot be zero'),
+        super(key: key);
 
   @override
   _CropImageState createState() => _CropImageState();

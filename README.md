@@ -73,7 +73,7 @@ controller.crop = Rect.fromLTRB(0.05, 0.05, 0.95, 0.95);
 
 The final crop rectangle decided by the user can be used in various ways. The base output of the widget
 is the crop rectangle in relative terms, all four values of the `Rect` normalized to between 0 and 1
-(1 meaning full width and height), so basically in percentage. The controller also has a [cropSize] property
+(1 meaning full width and height), so basically in percentage. The controller also has a `cropSize` property
 that maps the crop rectangle to the actual pixels of the bitmap.
 
 ```dart
