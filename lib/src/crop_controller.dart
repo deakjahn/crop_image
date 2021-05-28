@@ -117,7 +117,7 @@ class CropController extends ValueNotifier<_CropControllerValue> {
       Offset.zero & cropSize.size,
       Paint()..filterQuality = quality,
     );
-    //FIXME Picture.toImage() crashes on Flutter Web with the HTML renderer. Use CanvasKit or avoid this operation for now.
+    //FIXME Picture.toImage() crashes on Flutter Web with the HTML renderer. Use CanvasKit or avoid this operation for now. https://github.com/flutter/engine/pull/20750
     return await pictureRecorder.endRecording().toImage(cropSize.width.round(), cropSize.height.round());
   }
 
