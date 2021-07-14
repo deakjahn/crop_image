@@ -92,6 +92,17 @@ Image image = await controller.croppedImage();
 If you want to create an `Image` with additional settings (eg. different `Image.fit`), replicate the functionality of
 `croppedImage()` for yourself. You can use the `UiImageProvider` image provider exposed from the package.
 
+## Creating a file
+
+If you want to get a file from the ui.Image, this is nothing specific to crop_image. Use the existing functions
+of `Image` and `File`:
+
+```dart
+data = await image.toByteData(format: ImageByteFormat.png);
+bytes = data!.buffer.asUint8List();
+file.writeAsBytes(bytes, flush);
+```
+
 ## Known problems
 
 `croppedBitmap()` – and consequently, `croppedImage()` – result in an exception on Flutter Web with the HTML web renderer.
