@@ -64,7 +64,7 @@ class CropImage extends StatefulWidget {
   /// Defaults to 100.
   final double minimumImageSize;
 
-  CropImage({
+  const CropImage({
     Key? key,
     this.controller,
     required this.image,
@@ -126,7 +126,7 @@ class _CropImageState extends State<CropImage> {
     currentCrop = controller.crop;
 
     widget.image.image //
-        .resolve(ImageConfiguration())
+        .resolve(const ImageConfiguration())
         .addListener(ImageStreamListener((ImageInfo info, _) => controller.image = info.image));
   }
 

@@ -1,15 +1,17 @@
 import 'package:crop_image/crop_image.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Crop Image Demo',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: MyHomePage(title: 'Crop Image Demo'),
+      home: const MyHomePage(title: 'Crop Image Demo'),
     );
   }
 }
@@ -17,7 +19,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   final String title;
 
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -26,7 +28,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final controller = CropController(
     aspectRatio: 1,
-    defaultCrop: Rect.fromLTRB(0.1, 0.1, 0.9, 0.9),
+    defaultCrop: const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9),
   );
 
   @override
@@ -57,19 +59,19 @@ class _MyHomePageState extends State<MyHomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           IconButton(
-            icon: Icon(Icons.close),
+            icon: const Icon(Icons.close),
             onPressed: () {
               controller.aspectRatio = 1.0;
-              controller.crop = Rect.fromLTRB(0.1, 0.1, 0.9, 0.9);
+              controller.crop = const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9);
             },
           ),
           IconButton(
-            icon: Icon(Icons.aspect_ratio),
+            icon: const Icon(Icons.aspect_ratio),
             onPressed: _aspectRatios,
           ),
           TextButton(
             onPressed: _finished,
-            child: Text('Done'),
+            child: const Text('Done'),
           ),
         ],
       );
@@ -79,23 +81,23 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (context) {
         return SimpleDialog(
-          title: Text('Select aspect ratio'),
+          title: const Text('Select aspect ratio'),
           children: [
             SimpleDialogOption(
               onPressed: () => Navigator.pop(context, 1.0),
-              child: Text('square'),
+              child: const Text('square'),
             ),
             SimpleDialogOption(
               onPressed: () => Navigator.pop(context, 2.0),
-              child: Text('2:1'),
+              child: const Text('2:1'),
             ),
             SimpleDialogOption(
               onPressed: () => Navigator.pop(context, 4.0 / 3.0),
-              child: Text('4:3'),
+              child: const Text('4:3'),
             ),
             SimpleDialogOption(
               onPressed: () => Navigator.pop(context, 16.0 / 9.0),
-              child: Text('16:9'),
+              child: const Text('16:9'),
             ),
           ],
         );
@@ -103,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     if (value != null) {
       controller.aspectRatio = value;
-      controller.crop = Rect.fromLTRB(0.1, 0.1, 0.9, 0.9);
+      controller.crop = const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9);
     }
   }
 
@@ -113,17 +115,17 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (context) {
         return SimpleDialog(
-          contentPadding: EdgeInsets.all(6.0),
-          titlePadding: EdgeInsets.all(8.0),
-          title: Text('Cropped image'),
+          contentPadding: const EdgeInsets.all(6.0),
+          titlePadding: const EdgeInsets.all(8.0),
+          title: const Text('Cropped image'),
           children: [
             Text('relative: ${controller.crop}'),
             Text('pixels: ${controller.cropSize}'),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             image,
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
