@@ -89,16 +89,22 @@ class CropImage extends StatefulWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
 
-    properties.add(DiagnosticsProperty<CropController>('controller', controller, defaultValue: null));
+    properties.add(DiagnosticsProperty<CropController>('controller', controller,
+        defaultValue: null));
     properties.add(DiagnosticsProperty<Image>('image', image));
     properties.add(DiagnosticsProperty<Color>('gridColor', gridColor));
-    properties.add(DiagnosticsProperty<double>('gridCornerSize', gridCornerSize));
+    properties
+        .add(DiagnosticsProperty<double>('gridCornerSize', gridCornerSize));
     properties.add(DiagnosticsProperty<double>('gridThinWidth', gridThinWidth));
-    properties.add(DiagnosticsProperty<double>('gridThickWidth', gridThickWidth));
+    properties
+        .add(DiagnosticsProperty<double>('gridThickWidth', gridThickWidth));
     properties.add(DiagnosticsProperty<Color>('scrimColor', scrimColor));
-    properties.add(DiagnosticsProperty<bool>('alwaysShowThirdLines', alwaysShowThirdLines));
-    properties.add(DiagnosticsProperty<ValueChanged<Rect>>('onCrop', onCrop, defaultValue: null));
-    properties.add(DiagnosticsProperty<double>('minimumImageSize', minimumImageSize));
+    properties.add(DiagnosticsProperty<bool>(
+        'alwaysShowThirdLines', alwaysShowThirdLines));
+    properties.add(DiagnosticsProperty<ValueChanged<Rect>>('onCrop', onCrop,
+        defaultValue: null));
+    properties
+        .add(DiagnosticsProperty<double>('minimumImageSize', minimumImageSize));
   }
 }
 
@@ -109,12 +115,18 @@ class _CropImageState extends State<CropImage> {
   var currentCrop = Rect.zero;
   var size = Size.zero;
   _TouchPoint? panStart;
+  ImageStream? _stream;
+  ImageStreamListener? _streamListener;
 
   Map<_CornerTypes, Offset> get gridCorners => {
-        _CornerTypes.UpperLeft: controller.crop.topLeft.scale(size.width, size.height),
-        _CornerTypes.UpperRight: controller.crop.topRight.scale(size.width, size.height),
-        _CornerTypes.LowerRight: controller.crop.bottomRight.scale(size.width, size.height),
-        _CornerTypes.LowerLeft: controller.crop.bottomLeft.scale(size.width, size.height),
+        _CornerTypes.UpperLeft:
+            controller.crop.topLeft.scale(size.width, size.height),
+        _CornerTypes.UpperRight:
+            controller.crop.topRight.scale(size.width, size.height),
+        _CornerTypes.LowerRight:
+            controller.crop.bottomRight.scale(size.width, size.height),
+        _CornerTypes.LowerLeft:
+            controller.crop.bottomLeft.scale(size.width, size.height),
       };
 
   @override
@@ -125,15 +137,17 @@ class _CropImageState extends State<CropImage> {
     controller.addListener(onChange);
     currentCrop = controller.crop;
 
-    widget.image.image //
-        .resolve(const ImageConfiguration())
-        .addListener(ImageStreamListener((ImageInfo info, _) => controller.image = info.image));
+    _stream = widget.image.image.resolve(const ImageConfiguration());
+    _streamListener = ImageStreamListener(
+        (ImageInfo info, _) => controller.image = info.image);
+    _stream!.addListener(_streamListener!);
   }
 
   @override
   void dispose() {
     controller.removeListener(onChange);
     controller.dispose();
+    _stream?.removeListener(_streamListener!);
 
     super.dispose();
   }
@@ -181,7 +195,8 @@ class _CropImageState extends State<CropImage> {
     if (panStart == null) {
       final type = hitTest(details.localPosition);
       if (type != _CornerTypes.None) {
-        var basePoint = gridCorners[(type == _CornerTypes.Move) ? _CornerTypes.UpperLeft : type]!;
+        var basePoint = gridCorners[
+            (type == _CornerTypes.Move) ? _CornerTypes.UpperLeft : type]!;
         setState(() {
           panStart = _TouchPoint(type, details.localPosition - basePoint);
         });
@@ -213,11 +228,15 @@ class _CropImageState extends State<CropImage> {
 
   _CornerTypes hitTest(Offset point) {
     for (final gridCorner in gridCorners.entries) {
-      final area = Rect.fromCenter(center: gridCorner.value, width: 2 * widget.gridCornerSize, height: 2 * widget.gridCornerSize);
+      final area = Rect.fromCenter(
+          center: gridCorner.value,
+          width: 2 * widget.gridCornerSize,
+          height: 2 * widget.gridCornerSize);
       if (area.contains(point)) return gridCorner.key;
     }
 
-    final area = Rect.fromPoints(gridCorners[_CornerTypes.UpperLeft]!, gridCorners[_CornerTypes.LowerRight]!);
+    final area = Rect.fromPoints(gridCorners[_CornerTypes.UpperLeft]!,
+        gridCorners[_CornerTypes.LowerRight]!);
     return area.contains(point) ? _CornerTypes.Move : _CornerTypes.None;
   }
 
