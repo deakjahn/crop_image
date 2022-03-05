@@ -15,7 +15,9 @@ class CropController extends ValueNotifier<_CropControllerValue> {
 
   set aspectRatio(double? newAspectRatio) {
     if (newAspectRatio != null)
-      value = value.copyWith(aspectRatio: newAspectRatio, crop: _adjustRatio(value.crop, newAspectRatio));
+      value = value.copyWith(
+          aspectRatio: newAspectRatio,
+          crop: _adjustRatio(value.crop, newAspectRatio));
     else
       value = value.copyWith(aspectRatio: newAspectRatio);
     notifyListeners();
@@ -54,7 +56,9 @@ class CropController extends ValueNotifier<_CropControllerValue> {
 
   set cropSize(Rect newCropSize) {
     if (value.aspectRatio != null)
-      value = value.copyWith(crop: _adjustRatio(newCropSize.divide(_bitmapSize), value.aspectRatio!));
+      value = value.copyWith(
+          crop: _adjustRatio(
+              newCropSize.divide(_bitmapSize), value.aspectRatio!));
     else
       value = value.copyWith(crop: newCropSize.divide(_bitmapSize));
     notifyListeners();
@@ -82,12 +86,18 @@ class CropController extends ValueNotifier<_CropControllerValue> {
     double? aspectRatio,
     Rect defaultCrop = const Rect.fromLTWH(0, 0, 1, 1),
   })  : assert(aspectRatio != 0, 'aspectRatio cannot be zero'),
-        assert(defaultCrop.left >= 0 && defaultCrop.left <= 1, 'left should be 0..1'),
-        assert(defaultCrop.right >= 0 && defaultCrop.right <= 1, 'right should be 0..1'),
-        assert(defaultCrop.top >= 0 && defaultCrop.top <= 1, 'top should be 0..1'),
-        assert(defaultCrop.bottom >= 0 && defaultCrop.bottom <= 1, 'bottom should be 0..1'),
-        assert(defaultCrop.left < defaultCrop.right, 'left must be less than right'),
-        assert(defaultCrop.top < defaultCrop.bottom, 'top must be less than bottom'),
+        assert(defaultCrop.left >= 0 && defaultCrop.left <= 1,
+            'left should be 0..1'),
+        assert(defaultCrop.right >= 0 && defaultCrop.right <= 1,
+            'right should be 0..1'),
+        assert(
+            defaultCrop.top >= 0 && defaultCrop.top <= 1, 'top should be 0..1'),
+        assert(defaultCrop.bottom >= 0 && defaultCrop.bottom <= 1,
+            'bottom should be 0..1'),
+        assert(defaultCrop.left < defaultCrop.right,
+            'left must be less than right'),
+        assert(defaultCrop.top < defaultCrop.bottom,
+            'top must be less than bottom'),
         super(_CropControllerValue(aspectRatio, defaultCrop));
 
   /// Creates a controller for a [CropImage] widget from an initial [_CropControllerValue].
@@ -109,7 +119,8 @@ class CropController extends ValueNotifier<_CropControllerValue> {
   ///
   /// You can provide the [quality] used in the resizing operation.
   /// Returns an [ui.Image] asynchronously.
-  Future<ui.Image> croppedBitmap({ui.FilterQuality quality = FilterQuality.high}) async {
+  Future<ui.Image> croppedBitmap(
+      {ui.FilterQuality quality = FilterQuality.high}) async {
     final pictureRecorder = ui.PictureRecorder();
     Canvas(pictureRecorder).drawImageRect(
       _bitmap,
@@ -118,14 +129,17 @@ class CropController extends ValueNotifier<_CropControllerValue> {
       Paint()..filterQuality = quality,
     );
     //FIXME Picture.toImage() crashes on Flutter Web with the HTML renderer. Use CanvasKit or avoid this operation for now. https://github.com/flutter/engine/pull/20750
-    return await pictureRecorder.endRecording().toImage(cropSize.width.round(), cropSize.height.round());
+    return await pictureRecorder
+        .endRecording()
+        .toImage(cropSize.width.round(), cropSize.height.round());
   }
 
   /// Returns the image cropped with the current crop rectangle.
   ///
   /// You can provide the [quality] used in the resizing operation.
   /// Returns an [Image] asynchronously.
-  Future<Image> croppedImage({ui.FilterQuality quality = FilterQuality.high}) async {
+  Future<Image> croppedImage(
+      {ui.FilterQuality quality = FilterQuality.high}) async {
     return Image(
       image: UiImageProvider(await croppedBitmap(quality: quality)),
       fit: BoxFit.contain,
@@ -140,7 +154,8 @@ class _CropControllerValue {
 
   const _CropControllerValue(this.aspectRatio, this.crop);
 
-  _CropControllerValue copyWith({double? aspectRatio, Rect? crop}) => _CropControllerValue(
+  _CropControllerValue copyWith({double? aspectRatio, Rect? crop}) =>
+      _CropControllerValue(
         aspectRatio ?? this.aspectRatio,
         crop ?? this.crop,
       );
@@ -150,7 +165,9 @@ class _CropControllerValue {
     if (identical(this, other))
       return true;
     else
-      return (other is _CropControllerValue && other.aspectRatio == aspectRatio && other.crop == crop);
+      return (other is _CropControllerValue &&
+          other.aspectRatio == aspectRatio &&
+          other.crop == crop);
   }
 
   @override
@@ -168,10 +185,12 @@ class UiImageProvider extends ImageProvider<UiImageProvider> {
   const UiImageProvider(this.image);
 
   @override
-  Future<UiImageProvider> obtainKey(ImageConfiguration configuration) => SynchronousFuture<UiImageProvider>(this);
+  Future<UiImageProvider> obtainKey(ImageConfiguration configuration) =>
+      SynchronousFuture<UiImageProvider>(this);
 
   @override
-  ImageStreamCompleter load(UiImageProvider key, DecoderCallback decode) => OneFrameImageStreamCompleter(_loadAsync(key));
+  ImageStreamCompleter load(UiImageProvider key, DecoderCallback decode) =>
+      OneFrameImageStreamCompleter(_loadAsync(key));
 
   Future<ImageInfo> _loadAsync(UiImageProvider key) async {
     assert(key == this);

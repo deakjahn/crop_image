@@ -50,18 +50,36 @@ class _CropGridPainter extends CustomPainter {
 
     canvas.save();
     canvas.clipRect(bounds, clipOp: ClipOp.difference);
-    canvas.drawRect(full, Paint() //
-      ..color = grid.scrimColor
-      ..style = PaintingStyle.fill
-      ..isAntiAlias = true);
+    canvas.drawRect(
+        full,
+        Paint() //
+          ..color = grid.scrimColor
+          ..style = PaintingStyle.fill
+          ..isAntiAlias = true);
     canvas.restore();
 
     canvas.drawPath(
         Path() //
-          ..addPolygon([bounds.topLeft.translate(0, grid.cornerSize), bounds.topLeft, bounds.topLeft.translate(grid.cornerSize, 0)], false)
-          ..addPolygon([bounds.topRight.translate(0, grid.cornerSize), bounds.topRight, bounds.topRight.translate(-grid.cornerSize, 0)], false)
-          ..addPolygon([bounds.bottomLeft.translate(0, -grid.cornerSize), bounds.bottomLeft, bounds.bottomLeft.translate(grid.cornerSize, 0)], false)
-          ..addPolygon([bounds.bottomRight.translate(0, -grid.cornerSize), bounds.bottomRight, bounds.bottomRight.translate(-grid.cornerSize, 0)], false),
+          ..addPolygon([
+            bounds.topLeft.translate(0, grid.cornerSize),
+            bounds.topLeft,
+            bounds.topLeft.translate(grid.cornerSize, 0)
+          ], false)
+          ..addPolygon([
+            bounds.topRight.translate(0, grid.cornerSize),
+            bounds.topRight,
+            bounds.topRight.translate(-grid.cornerSize, 0)
+          ], false)
+          ..addPolygon([
+            bounds.bottomLeft.translate(0, -grid.cornerSize),
+            bounds.bottomLeft,
+            bounds.bottomLeft.translate(grid.cornerSize, 0)
+          ], false)
+          ..addPolygon([
+            bounds.bottomRight.translate(0, -grid.cornerSize),
+            bounds.bottomRight,
+            bounds.bottomRight.translate(-grid.cornerSize, 0)
+          ], false),
         Paint()
           ..color = grid.gridcolor
           ..style = PaintingStyle.stroke
@@ -71,19 +89,43 @@ class _CropGridPainter extends CustomPainter {
           ..isAntiAlias = true);
 
     final path = Path() //
-      ..addPolygon([bounds.topLeft.translate(grid.cornerSize, 0), bounds.topRight.translate(-grid.cornerSize, 0)], false)
-      ..addPolygon([bounds.bottomLeft.translate(grid.cornerSize, 0), bounds.bottomRight.translate(-grid.cornerSize, 0)], false)
-      ..addPolygon([bounds.topLeft.translate(0, grid.cornerSize), bounds.bottomLeft.translate(0, -grid.cornerSize)], false)
-      ..addPolygon([bounds.topRight.translate(0, grid.cornerSize), bounds.bottomRight.translate(0, -grid.cornerSize)], false);
+      ..addPolygon([
+        bounds.topLeft.translate(grid.cornerSize, 0),
+        bounds.topRight.translate(-grid.cornerSize, 0)
+      ], false)
+      ..addPolygon([
+        bounds.bottomLeft.translate(grid.cornerSize, 0),
+        bounds.bottomRight.translate(-grid.cornerSize, 0)
+      ], false)
+      ..addPolygon([
+        bounds.topLeft.translate(0, grid.cornerSize),
+        bounds.bottomLeft.translate(0, -grid.cornerSize)
+      ], false)
+      ..addPolygon([
+        bounds.topRight.translate(0, grid.cornerSize),
+        bounds.bottomRight.translate(0, -grid.cornerSize)
+      ], false);
 
     if (grid.isMoving || grid.alwaysShowThirdLines) {
       final thirdHeight = bounds.height / 3.0;
-      path.addPolygon([bounds.topLeft.translate(0, thirdHeight), bounds.topRight.translate(0, thirdHeight)], false);
-      path.addPolygon([bounds.bottomLeft.translate(0, -thirdHeight), bounds.bottomRight.translate(0, -thirdHeight)], false);
+      path.addPolygon([
+        bounds.topLeft.translate(0, thirdHeight),
+        bounds.topRight.translate(0, thirdHeight)
+      ], false);
+      path.addPolygon([
+        bounds.bottomLeft.translate(0, -thirdHeight),
+        bounds.bottomRight.translate(0, -thirdHeight)
+      ], false);
 
       final thirdWidth = bounds.width / 3.0;
-      path.addPolygon([bounds.topLeft.translate(thirdWidth, 0), bounds.bottomLeft.translate(thirdWidth, 0)], false);
-      path.addPolygon([bounds.topRight.translate(-thirdWidth, 0), bounds.bottomRight.translate(-thirdWidth, 0)], false);
+      path.addPolygon([
+        bounds.topLeft.translate(thirdWidth, 0),
+        bounds.bottomLeft.translate(thirdWidth, 0)
+      ], false);
+      path.addPolygon([
+        bounds.topRight.translate(-thirdWidth, 0),
+        bounds.bottomRight.translate(-thirdWidth, 0)
+      ], false);
     }
 
     canvas.drawPath(
