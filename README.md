@@ -55,7 +55,7 @@ Initial values for `aspectRatio` and `defaultCrop` can be provided on the contro
 ```dart
 final controller = CropController(
   aspectRatio: 16.0 / 9.0,
-  defaultCrop: Rect.fromLTRB(0.05, 0.05, 0.95, 0.95);
+  defaultCrop: Rect.fromLTRB(0.05, 0.05, 0.95, 0.95),
 );
 ```
 
