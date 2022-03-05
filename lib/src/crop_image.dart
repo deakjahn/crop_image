@@ -112,11 +112,11 @@ enum _CornerTypes { UpperLeft, UpperRight, LowerRight, LowerLeft, None, Move }
 
 class _CropImageState extends State<CropImage> {
   late CropController controller;
+  late ImageStream _stream;
+  late ImageStreamListener _streamListener;
   var currentCrop = Rect.zero;
   var size = Size.zero;
   _TouchPoint? panStart;
-  ImageStream? _stream;
-  ImageStreamListener? _streamListener;
 
   Map<_CornerTypes, Offset> get gridCorners => {
         _CornerTypes.UpperLeft:
@@ -140,14 +140,14 @@ class _CropImageState extends State<CropImage> {
     _stream = widget.image.image.resolve(const ImageConfiguration());
     _streamListener = ImageStreamListener(
         (ImageInfo info, _) => controller.image = info.image);
-    _stream!.addListener(_streamListener!);
+    _stream.addListener(_streamListener);
   }
 
   @override
   void dispose() {
     controller.removeListener(onChange);
     controller.dispose();
-    _stream?.removeListener(_streamListener!);
+    _stream.removeListener(_streamListener);
 
     super.dispose();
   }
