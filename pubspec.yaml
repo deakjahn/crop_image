@@ -1,6 +1,6 @@
 name: crop_image
 description: An image cropper widget. Supports mobile, web and desktop.
-version: 1.0.1
+version: 1.0.2
 homepage: https://github.com/deakjahn/crop_image
 
 environment:
