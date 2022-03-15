@@ -94,7 +94,7 @@ If you want to create an `Image` with additional settings (eg. different `Image.
 
 ## Creating a file
 
-If you want to get a file from the ui.Image, this is nothing specific to `crop_image`. Use the existing functions
+If you want to save the cropped `ui.Image` to a file, this operation is not specific to this plugin. Use the existing functions
 of `Image` and `File`:
 
 ```dart
