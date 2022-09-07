@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.3] - coming
+## [1.0.3] - 2022-09-17
 
 * Fix [#7](https://github.com/deakjahn/crop_image/issues/7).
 * Test [#12](https://github.com/deakjahn/crop_image/issues/12).
