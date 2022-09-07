@@ -11,6 +11,7 @@ class CropController extends ValueNotifier<_CropControllerValue> {
   /// Aspect ratio of the image (width / height).
   ///
   /// The [crop] rectangle will be adjusted to fit this ratio.
+  /// Pass null for free selection clipping (aspect ratio not enforced).
   double? get aspectRatio => value.aspectRatio;
 
   set aspectRatio(double? newAspectRatio) {
@@ -19,7 +20,7 @@ class CropController extends ValueNotifier<_CropControllerValue> {
           aspectRatio: newAspectRatio,
           crop: _adjustRatio(value.crop, newAspectRatio));
     else
-      value = value.copyWith(aspectRatio: newAspectRatio);
+      value = _CropControllerValue(null, value.crop);
     notifyListeners();
   }
 

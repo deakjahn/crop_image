@@ -139,7 +139,7 @@ class _CropImageState extends State<CropImage> {
 
     _stream = widget.image.image.resolve(const ImageConfiguration());
     _streamListener = ImageStreamListener(
-        (ImageInfo info, _) => controller.image = info.image);
+        (info, _) => controller.image = info.image);
     _stream.addListener(_streamListener);
   }
 

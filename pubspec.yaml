@@ -1,10 +1,10 @@
 name: crop_image
 description: An image cropper widget. Supports mobile, web and desktop.
-version: 1.0.2
+version: 1.0.3
 homepage: https://github.com/deakjahn/crop_image
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
@@ -17,6 +17,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^1.0.0
+  flutter_lints: ^2.0.0
 
 flutter:
