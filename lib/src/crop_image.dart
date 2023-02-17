@@ -1,5 +1,9 @@
-import 'package:crop_image/crop_image.dart';
-import 'package:crop_image/src/crop_grid.dart';
+import 'dart:ui' as ui;
+
+import 'crop_controller.dart';
+import 'crop_grid.dart';
+import 'crop_rect.dart';
+import 'crop_rotation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +27,16 @@ class CropImage extends StatefulWidget {
   ///
   /// Defaults to 70% white.
   final Color gridColor;
+
+  /// The size of the padding around the image and crop grid.
+  ///
+  /// Defaults to 0.
+  final double paddingSize;
+
+  /// The size of the touch area.
+  ///
+  /// Defaults to 50.
+  final double touchSize;
 
   /// The size of the corner of the crop grid.
   ///
@@ -64,11 +78,18 @@ class CropImage extends StatefulWidget {
   /// Defaults to 100.
   final double minimumImageSize;
 
+  /// When `true`, moves when panning beyond corners, even beyond the crop rect.
+  ///
+  /// When `false`, moves when panning beyond corners but inside the crop rect.
+  final bool alwaysMove;
+
   const CropImage({
     Key? key,
     this.controller,
     required this.image,
     this.gridColor = Colors.white70,
+    this.paddingSize = 0,
+    this.touchSize = 50,
     this.gridCornerSize = 25,
     this.gridThinWidth = 2,
     this.gridThickWidth = 5,
@@ -76,14 +97,16 @@ class CropImage extends StatefulWidget {
     this.alwaysShowThirdLines = false,
     this.onCrop,
     this.minimumImageSize = 100,
+    this.alwaysMove = false,
   })  : assert(gridCornerSize > 0, 'gridCornerSize cannot be zero'),
+        assert(touchSize > 0, 'touchSize cannot be zero'),
         assert(gridThinWidth > 0, 'gridThinWidth cannot be zero'),
         assert(gridThickWidth > 0, 'gridThickWidth cannot be zero'),
         assert(minimumImageSize > 0, 'minimumImageSize cannot be zero'),
         super(key: key);
 
   @override
-  _CropImageState createState() => _CropImageState();
+  State<CropImage> createState() => _CropImageState();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -93,6 +116,8 @@ class CropImage extends StatefulWidget {
         defaultValue: null));
     properties.add(DiagnosticsProperty<Image>('image', image));
     properties.add(DiagnosticsProperty<Color>('gridColor', gridColor));
+    properties.add(DiagnosticsProperty<double>('paddingSize', paddingSize));
+    properties.add(DiagnosticsProperty<double>('touchSize', touchSize));
     properties
         .add(DiagnosticsProperty<double>('gridCornerSize', gridCornerSize));
     properties.add(DiagnosticsProperty<double>('gridThinWidth', gridThinWidth));
@@ -105,6 +130,7 @@ class CropImage extends StatefulWidget {
         defaultValue: null));
     properties
         .add(DiagnosticsProperty<double>('minimumImageSize', minimumImageSize));
+    properties.add(DiagnosticsProperty<bool>('alwaysMove', alwaysMove));
   }
 }
 
@@ -118,15 +144,19 @@ class _CropImageState extends State<CropImage> {
   var size = Size.zero;
   _TouchPoint? panStart;
 
-  Map<_CornerTypes, Offset> get gridCorners => {
-        _CornerTypes.UpperLeft:
-            controller.crop.topLeft.scale(size.width, size.height),
-        _CornerTypes.UpperRight:
-            controller.crop.topRight.scale(size.width, size.height),
-        _CornerTypes.LowerRight:
-            controller.crop.bottomRight.scale(size.width, size.height),
-        _CornerTypes.LowerLeft:
-            controller.crop.bottomLeft.scale(size.width, size.height),
+  Map<_CornerTypes, Offset> get gridCorners => <_CornerTypes, Offset>{
+        _CornerTypes.UpperLeft: controller.crop.topLeft
+            .scale(size.width, size.height)
+            .translate(widget.paddingSize, widget.paddingSize),
+        _CornerTypes.UpperRight: controller.crop.topRight
+            .scale(size.width, size.height)
+            .translate(widget.paddingSize, widget.paddingSize),
+        _CornerTypes.LowerRight: controller.crop.bottomRight
+            .scale(size.width, size.height)
+            .translate(widget.paddingSize, widget.paddingSize),
+        _CornerTypes.LowerLeft: controller.crop.bottomLeft
+            .scale(size.width, size.height)
+            .translate(widget.paddingSize, widget.paddingSize),
       };
 
   @override
@@ -138,8 +168,8 @@ class _CropImageState extends State<CropImage> {
     currentCrop = controller.crop;
 
     _stream = widget.image.image.resolve(const ImageConfiguration());
-    _streamListener = ImageStreamListener(
-        (info, _) => controller.image = info.image);
+    _streamListener =
+        ImageStreamListener((info, _) => controller.image = info.image);
     _stream.addListener(_streamListener);
   }
 
@@ -163,32 +193,88 @@ class _CropImageState extends State<CropImage> {
     }
   }
 
+  double _getImageRatio(final double maxWidth, final double maxHeight) =>
+      controller.getImage()!.width / controller.getImage()!.height;
+
+  double _getWidth(final double maxWidth, final double maxHeight) {
+    double imageRatio = _getImageRatio(maxWidth, maxHeight);
+    final screenRatio = maxWidth / maxHeight;
+    if (controller.value.rotation.isTilted) {
+      imageRatio = 1 / imageRatio;
+    }
+    if (imageRatio > screenRatio) {
+      return maxWidth;
+    }
+    return maxHeight * imageRatio;
+  }
+
+  double _getHeight(final double maxWidth, final double maxHeight) {
+    double imageRatio = _getImageRatio(maxWidth, maxHeight);
+    final screenRatio = maxWidth / maxHeight;
+    if (controller.value.rotation.isTilted) {
+      imageRatio = 1 / imageRatio;
+    }
+    if (imageRatio < screenRatio) {
+      return maxHeight;
+    }
+    return maxWidth / imageRatio;
+  }
+
   @override
-  Widget build(BuildContext context) => Stack(
-        children: [
-          Image(
-            image: widget.image.image,
-            fit: BoxFit.cover,
-          ),
-          Positioned.fill(
-            child: GestureDetector(
-              onPanStart: onPanStart,
-              onPanUpdate: onPanUpdate,
-              onPanEnd: onPanEnd,
-              child: CropGrid(
-                crop: currentCrop,
-                gridcolor: widget.gridColor,
-                cornerSize: widget.gridCornerSize,
-                thinWidth: widget.gridThinWidth,
-                thickWidth: widget.gridThickWidth,
-                scrimColor: widget.scrimColor,
-                alwaysShowThirdLines: widget.alwaysShowThirdLines,
-                isMoving: panStart != null,
-                onSize: (size) => this.size = size,
-              ),
-            ),
-          )
-        ],
+  Widget build(BuildContext context) => Center(
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            if (controller.getImage() == null) {
+              return const CircularProgressIndicator();
+            }
+            // we remove the borders
+            final double maxWidth =
+                constraints.maxWidth - 2 * widget.paddingSize;
+            final double maxHeight =
+                constraints.maxHeight - 2 * widget.paddingSize;
+            final double width = _getWidth(maxWidth, maxHeight);
+            final double height = _getHeight(maxWidth, maxHeight);
+            size = Size(width, height);
+            return Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                SizedBox(
+                  width: width,
+                  height: height,
+                  child: CustomPaint(
+                    painter: _RotatedImagePainter(
+                      controller.getImage()!,
+                      controller.rotation,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: width + 2 * widget.paddingSize,
+                  height: height + 2 * widget.paddingSize,
+                  child: GestureDetector(
+                    onPanStart: onPanStart,
+                    onPanUpdate: onPanUpdate,
+                    onPanEnd: onPanEnd,
+                    child: CropGrid(
+                      crop: currentCrop,
+                      gridcolor: widget.gridColor,
+                      paddingSize: widget.paddingSize,
+                      cornerSize: widget.gridCornerSize,
+                      thinWidth: widget.gridThinWidth,
+                      thickWidth: widget.gridThickWidth,
+                      scrimColor: widget.scrimColor,
+                      alwaysShowThirdLines: widget.alwaysShowThirdLines,
+                      isMoving: panStart != null,
+                      onSize: (size) {
+                        this.size = size;
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       );
 
   void onPanStart(DragStartDetails details) {
@@ -206,10 +292,14 @@ class _CropImageState extends State<CropImage> {
 
   void onPanUpdate(DragUpdateDetails details) {
     if (panStart != null) {
-      if (panStart!.type == _CornerTypes.Move)
-        moveArea(details.localPosition - panStart!.offset);
-      else
-        moveCorner(panStart!.type, details.localPosition - panStart!.offset);
+      final offset = details.localPosition -
+          panStart!.offset -
+          Offset(widget.paddingSize, widget.paddingSize);
+      if (panStart!.type == _CornerTypes.Move) {
+        moveArea(offset);
+      } else {
+        moveCorner(panStart!.type, offset);
+      }
       widget.onCrop?.call(controller.crop);
     }
   }
@@ -230,9 +320,15 @@ class _CropImageState extends State<CropImage> {
     for (final gridCorner in gridCorners.entries) {
       final area = Rect.fromCenter(
           center: gridCorner.value,
-          width: 2 * widget.gridCornerSize,
-          height: 2 * widget.gridCornerSize);
-      if (area.contains(point)) return gridCorner.key;
+          width: widget.touchSize,
+          height: widget.touchSize);
+      if (area.contains(point)) {
+        return gridCorner.key;
+      }
+    }
+
+    if (widget.alwaysMove) {
+      return _CornerTypes.Move;
     }
 
     final area = Rect.fromPoints(gridCorners[_CornerTypes.UpperLeft]!,
@@ -278,6 +374,7 @@ class _CropImageState extends State<CropImage> {
         assert(false);
     }
 
+    //FIXME: does not work with non-noon "rotation"
     if (controller.aspectRatio != null) {
       final width = right - left;
       final height = bottom - top;
@@ -319,4 +416,48 @@ class _TouchPoint {
   final Offset offset;
 
   _TouchPoint(this.type, this.offset);
+}
+
+// FIXME: shouldn't be repainted each time the grid moves, should it?
+class _RotatedImagePainter extends CustomPainter {
+  _RotatedImagePainter(this.image, this.rotation);
+
+  final ui.Image image;
+  final CropRotation rotation;
+
+  final Paint _paint = Paint();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    double targetWidth = size.width;
+    double targetHeight = size.height;
+    double offset = 0;
+    if (rotation != CropRotation.noon) {
+      if (rotation.isTilted) {
+        final double tmp = targetHeight;
+        targetHeight = targetWidth;
+        targetWidth = tmp;
+        offset = (targetWidth - targetHeight) / 2;
+        if (rotation == CropRotation.nineOClock) {
+          offset = -offset;
+        }
+      }
+      canvas.save();
+      canvas.translate(targetWidth / 2, targetHeight / 2);
+      canvas.rotate(rotation.radians);
+      canvas.translate(-targetWidth / 2, -targetHeight / 2);
+    }
+    canvas.drawImageRect(
+      image,
+      Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+      Rect.fromLTWH(offset, offset, targetWidth, targetHeight),
+      _paint,
+    );
+    if (rotation != CropRotation.noon) {
+      canvas.restore();
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

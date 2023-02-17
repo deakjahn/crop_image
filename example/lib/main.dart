@@ -37,12 +37,11 @@ class _MyHomePageState extends State<MyHomePage> {
           title: Text(widget.title),
         ),
         body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(6.0),
-            child: CropImage(
-              controller: controller,
-              image: Image.asset('assets/08272011229.jpg'),
-            ),
+          child: CropImage(
+            controller: controller,
+            image: Image.asset('assets/08272011229.jpg'),
+            paddingSize: 25.0,
+            alwaysMove: true,
           ),
         ),
         bottomNavigationBar: _buildButtons(),
@@ -55,13 +54,22 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: const Icon(Icons.close),
             onPressed: () {
-              controller.aspectRatio = 1.0;
+              controller.rotation = CropRotation.noon;
               controller.crop = const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9);
+              controller.aspectRatio = 1.0;
             },
           ),
           IconButton(
             icon: const Icon(Icons.aspect_ratio),
             onPressed: _aspectRatios,
+          ),
+          IconButton(
+            icon: const Icon(Icons.rotate_90_degrees_ccw_outlined),
+            onPressed: _rotateLeft,
+          ),
+          IconButton(
+            icon: const Icon(Icons.rotate_90_degrees_cw_outlined),
+            onPressed: _rotateRight,
           ),
           TextButton(
             onPressed: _finished,
@@ -77,6 +85,11 @@ class _MyHomePageState extends State<MyHomePage> {
         return SimpleDialog(
           title: const Text('Select aspect ratio'),
           children: [
+            // special case: no aspect ratio
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(context, -1.0),
+              child: const Text('free'),
+            ),
             SimpleDialogOption(
               onPressed: () => Navigator.pop(context, 1.0),
               child: const Text('square'),
@@ -98,10 +111,14 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
     if (value != null) {
-      controller.aspectRatio = value;
+      controller.aspectRatio = value == -1 ? null : value;
       controller.crop = const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9);
     }
   }
+
+  Future<void> _rotateLeft() async => controller.rotateLeft();
+
+  Future<void> _rotateRight() async => controller.rotateRight();
 
   Future<void> _finished() async {
     final image = await controller.croppedImage();
