@@ -1,10 +1,13 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'crop_rect.dart';
 
+/// Crop Grid with invisible border, for better touch detection.
 class CropGrid extends StatelessWidget {
   final Rect crop;
   final Color gridcolor;
+  final double paddingSize;
   final double cornerSize;
   final double thinWidth;
   final double thickWidth;
@@ -17,6 +20,7 @@ class CropGrid extends StatelessWidget {
     Key? key,
     required this.crop,
     required this.gridcolor,
+    required this.paddingSize,
     required this.cornerSize,
     required this.thinWidth,
     required this.thickWidth,
@@ -39,14 +43,15 @@ class _CropGridPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Rect full = Offset.zero & size;
-    final Rect bounds = Rect.fromLTRB(
-      grid.crop.left * full.width,
-      grid.crop.top * full.height,
-      grid.crop.right * full.width,
-      grid.crop.bottom * full.height,
+    final Size imageSize = Size(
+      size.width - 2 * grid.paddingSize,
+      size.height - 2 * grid.paddingSize,
     );
-    grid.onSize(size);
+    final Rect full = Offset(grid.paddingSize, grid.paddingSize) & imageSize;
+    final Rect bounds = grid.crop
+        .multiply(imageSize)
+        .translate(grid.paddingSize, grid.paddingSize);
+    grid.onSize(imageSize);
 
     canvas.save();
     canvas.clipRect(bounds, clipOp: ClipOp.difference);
