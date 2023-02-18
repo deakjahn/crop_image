@@ -22,7 +22,7 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -122,6 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _finished() async {
     final image = await controller.croppedImage();
+    // ignore: use_build_context_synchronously
     await showDialog<bool>(
       context: context,
       builder: (context) {
