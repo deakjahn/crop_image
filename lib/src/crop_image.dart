@@ -199,7 +199,7 @@ class _CropImageState extends State<CropImage> {
   double _getWidth(final double maxWidth, final double maxHeight) {
     double imageRatio = _getImageRatio(maxWidth, maxHeight);
     final screenRatio = maxWidth / maxHeight;
-    if (controller.value.rotation.isTilted) {
+    if (controller.value.rotation.isSideways) {
       imageRatio = 1 / imageRatio;
     }
     if (imageRatio > screenRatio) {
@@ -211,7 +211,7 @@ class _CropImageState extends State<CropImage> {
   double _getHeight(final double maxWidth, final double maxHeight) {
     double imageRatio = _getImageRatio(maxWidth, maxHeight);
     final screenRatio = maxWidth / maxHeight;
-    if (controller.value.rotation.isTilted) {
+    if (controller.value.rotation.isSideways) {
       imageRatio = 1 / imageRatio;
     }
     if (imageRatio < screenRatio) {
@@ -432,13 +432,13 @@ class _RotatedImagePainter extends CustomPainter {
     double targetWidth = size.width;
     double targetHeight = size.height;
     double offset = 0;
-    if (rotation != CropRotation.noon) {
-      if (rotation.isTilted) {
+    if (rotation != CropRotation.up) {
+      if (rotation.isSideways) {
         final double tmp = targetHeight;
         targetHeight = targetWidth;
         targetWidth = tmp;
         offset = (targetWidth - targetHeight) / 2;
-        if (rotation == CropRotation.nineOClock) {
+        if (rotation == CropRotation.left) {
           offset = -offset;
         }
       }
@@ -453,7 +453,7 @@ class _RotatedImagePainter extends CustomPainter {
       Rect.fromLTWH(offset, offset, targetWidth, targetHeight),
       _paint,
     );
-    if (rotation != CropRotation.noon) {
+    if (rotation != CropRotation.up) {
       canvas.restore();
     }
   }

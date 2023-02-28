@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: const Icon(Icons.close),
             onPressed: () {
-              controller.rotation = CropRotation.noon;
+              controller.rotation = CropRotation.up;
               controller.crop = const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9);
               controller.aspectRatio = 1.0;
             },
