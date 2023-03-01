@@ -44,11 +44,7 @@ class CropController extends ValueNotifier<CropControllerValue> {
   Rect get crop => value.crop;
 
   set crop(Rect newCrop) {
-    if (value.aspectRatio != null) {
-      value = value.copyWith(crop: _adjustRatio(newCrop, value.aspectRatio!));
-    } else {
-      value = value.copyWith(crop: newCrop);
-    }
+    value = value.copyWith(crop: _adjustRatio(newCrop, value.aspectRatio));
     notifyListeners();
   }
 
@@ -59,31 +55,28 @@ class CropController extends ValueNotifier<CropControllerValue> {
     notifyListeners();
   }
 
-  //FIXME: should be able to deal with aspectRatio
-  void rotateRight() {
-    value = CropControllerValue(
-      null,
-      Rect.fromCenter(
-        center: Offset(1 - crop.center.dy, crop.center.dx),
-        width: crop.height,
-        height: crop.width,
-      ),
-      value.rotation.rotateRight,
-      value.minimumImageSize,
-    );
-    notifyListeners();
-  }
+  void rotateRight() => _rotate(left: false);
 
-  //FIXME: should be able to deal with aspectRatio
-  void rotateLeft() {
+  void rotateLeft() => _rotate(left: true);
+
+  void _rotate({required final bool left}) {
+    final CropRotation newRotation =
+        left ? value.rotation.rotateLeft : value.rotation.rotateRight;
+    final Offset newCenter = left
+        ? Offset(crop.center.dy, 1 - crop.center.dx)
+        : Offset(1 - crop.center.dy, crop.center.dx);
     value = CropControllerValue(
-      null,
-      Rect.fromCenter(
-        center: Offset(crop.center.dy, 1 - crop.center.dx),
-        width: crop.height,
-        height: crop.width,
+      aspectRatio,
+      _adjustRatio(
+        Rect.fromCenter(
+          center: newCenter,
+          width: crop.height,
+          height: crop.width,
+        ),
+        aspectRatio,
+        rotation: newRotation,
       ),
-      value.rotation.rotateLeft,
+      newRotation,
       value.minimumImageSize,
     );
     notifyListeners();
@@ -101,13 +94,9 @@ class CropController extends ValueNotifier<CropControllerValue> {
   Rect get cropSize => value.crop.multiply(_bitmapSize);
 
   set cropSize(Rect newCropSize) {
-    if (value.aspectRatio != null) {
-      value = value.copyWith(
-          crop: _adjustRatio(
-              newCropSize.divide(_bitmapSize), value.aspectRatio!));
-    } else {
-      value = value.copyWith(crop: newCropSize.divide(_bitmapSize));
-    }
+    value = value.copyWith(
+      crop: _adjustRatio(newCropSize.divide(_bitmapSize), value.aspectRatio),
+    );
     notifyListeners();
   }
 
@@ -134,7 +123,7 @@ class CropController extends ValueNotifier<CropControllerValue> {
   CropController({
     double? aspectRatio,
     Rect defaultCrop = const Rect.fromLTWH(0, 0, 1, 1),
-    CropRotation rotation = CropRotation.noon,
+    CropRotation rotation = CropRotation.up,
     double minimumImageSize = 100,
   })  : assert(aspectRatio != 0, 'aspectRatio cannot be zero'),
         assert(defaultCrop.left >= 0 && defaultCrop.left <= 1,
@@ -159,15 +148,27 @@ class CropController extends ValueNotifier<CropControllerValue> {
   /// Creates a controller for a [CropImage] widget from an initial [CropControllerValue].
   CropController.fromValue(CropControllerValue value) : super(value);
 
-  Rect _adjustRatio(Rect rect, double aspectRatio) {
-    final width = rect.width * _bitmapSize.width;
-    final height = rect.height * _bitmapSize.height;
+  Rect _adjustRatio(
+    Rect crop,
+    double? aspectRatio, {
+    CropRotation? rotation,
+  }) {
+    if (aspectRatio == null) {
+      return crop;
+    }
+    rotation ??= value.rotation;
+    final bitmapWidth =
+        rotation.isSideways ? _bitmapSize.height : _bitmapSize.width;
+    final bitmapHeight =
+        rotation.isSideways ? _bitmapSize.width : _bitmapSize.height;
+    final width = crop.width * bitmapWidth;
+    final height = crop.height * bitmapHeight;
     if (width / height > aspectRatio) {
-      final w = height * aspectRatio / _bitmapSize.width;
-      return Rect.fromLTWH(rect.center.dx - w / 2, rect.top, w, rect.height);
+      final w = height * aspectRatio / bitmapWidth;
+      return Rect.fromLTWH(crop.center.dx - w / 2, crop.top, w, crop.height);
     } else {
-      final h = width / aspectRatio / _bitmapSize.height;
-      return Rect.fromLTWH(rect.left, rect.center.dy - h / 2, rect.width, h);
+      final h = width / aspectRatio / bitmapHeight;
+      return Rect.fromLTWH(crop.left, crop.center.dy - h / 2, crop.width, h);
     }
   }
 
@@ -203,7 +204,7 @@ class CropController extends ValueNotifier<CropControllerValue> {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
 
-    final bool tilted = rotation.isTilted;
+    final bool tilted = rotation.isSideways;
     final double cropWidth;
     final double cropHeight;
     if (tilted) {
@@ -241,23 +242,23 @@ class CropController extends ValueNotifier<CropControllerValue> {
 
     final double alternateWidth = tilted ? cropHeight : cropWidth;
     final double alternateHeight = tilted ? cropWidth : cropHeight;
-    if (rotation != CropRotation.noon) {
+    if (rotation != CropRotation.up) {
       canvas.save();
       final double x = alternateWidth / 2 * factor;
       final double y = alternateHeight / 2 * factor;
       canvas.translate(x, y);
       canvas.rotate(rotation.radians);
-      if (rotation == CropRotation.threeOClock) {
+      if (rotation == CropRotation.right) {
         canvas.translate(
           -y,
           -cropWidth * factor + x,
         );
-      } else if (rotation == CropRotation.nineOClock) {
+      } else if (rotation == CropRotation.left) {
         canvas.translate(
           y - cropHeight * factor,
           -x,
         );
-      } else if (rotation == CropRotation.sixOClock) {
+      } else if (rotation == CropRotation.down) {
         canvas.translate(-x, -y);
       }
     }
@@ -278,7 +279,7 @@ class CropController extends ValueNotifier<CropControllerValue> {
       Paint()..filterQuality = quality,
     );
 
-    if (rotation != CropRotation.noon) {
+    if (rotation != CropRotation.up) {
       canvas.restore();
     }
 
@@ -364,7 +365,10 @@ class UiImageProvider extends ImageProvider<UiImageProvider> {
       SynchronousFuture<UiImageProvider>(this);
 
   @override
-  ImageStreamCompleter loadBuffer(UiImageProvider key, DecoderBufferCallback decode) =>
+  ImageStreamCompleter loadBuffer(
+    UiImageProvider key,
+    DecoderBufferCallback decode,
+  ) =>
       OneFrameImageStreamCompleter(_loadAsync(key));
 
   Future<ImageInfo> _loadAsync(UiImageProvider key) async {

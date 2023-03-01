@@ -1,5 +1,5 @@
 name: crop_image
-description: An image cropper widget. Supports mobile, web and desktop.
+description: An image cropper widget, with 90-degree rotations. Supports mobile, web and desktop.
 version: 1.0.3
 homepage: https://github.com/deakjahn/crop_image
 

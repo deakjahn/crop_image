@@ -3,23 +3,23 @@ import 'dart:ui';
 
 /// 90 degree rotations.
 enum CropRotation {
-  noon,
-  threeOClock,
-  sixOClock,
-  nineOClock,
+  up,
+  right,
+  down,
+  left,
 }
 
 extension CropRotationExtension on CropRotation {
   /// Returns the rotation in radians cw.
   double get radians {
     switch (this) {
-      case CropRotation.noon:
+      case CropRotation.up:
         return 0;
-      case CropRotation.threeOClock:
+      case CropRotation.right:
         return math.pi / 2;
-      case CropRotation.sixOClock:
+      case CropRotation.down:
         return math.pi;
-      case CropRotation.nineOClock:
+      case CropRotation.left:
         return 3 * math.pi / 2;
     }
   }
@@ -27,13 +27,13 @@ extension CropRotationExtension on CropRotation {
   /// Returns the rotation in degrees cw.
   int get degrees {
     switch (this) {
-      case CropRotation.noon:
+      case CropRotation.up:
         return 0;
-      case CropRotation.threeOClock:
+      case CropRotation.right:
         return 90;
-      case CropRotation.sixOClock:
+      case CropRotation.down:
         return 180;
-      case CropRotation.nineOClock:
+      case CropRotation.left:
         return 270;
     }
   }
@@ -50,39 +50,39 @@ extension CropRotationExtension on CropRotation {
   /// Returns the rotation rotated 90 degrees to the right.
   CropRotation get rotateRight {
     switch (this) {
-      case CropRotation.noon:
-        return CropRotation.threeOClock;
-      case CropRotation.threeOClock:
-        return CropRotation.sixOClock;
-      case CropRotation.sixOClock:
-        return CropRotation.nineOClock;
-      case CropRotation.nineOClock:
-        return CropRotation.noon;
+      case CropRotation.up:
+        return CropRotation.right;
+      case CropRotation.right:
+        return CropRotation.down;
+      case CropRotation.down:
+        return CropRotation.left;
+      case CropRotation.left:
+        return CropRotation.up;
     }
   }
 
   /// Returns the rotation rotated 90 degrees to the left.
   CropRotation get rotateLeft {
     switch (this) {
-      case CropRotation.noon:
-        return CropRotation.nineOClock;
-      case CropRotation.nineOClock:
-        return CropRotation.sixOClock;
-      case CropRotation.sixOClock:
-        return CropRotation.threeOClock;
-      case CropRotation.threeOClock:
-        return CropRotation.noon;
+      case CropRotation.up:
+        return CropRotation.left;
+      case CropRotation.left:
+        return CropRotation.down;
+      case CropRotation.down:
+        return CropRotation.right;
+      case CropRotation.right:
+        return CropRotation.up;
     }
   }
 
   /// Returns true if the rotated width is the initial height.
-  bool get isTilted {
+  bool get isSideways {
     switch (this) {
-      case CropRotation.noon:
-      case CropRotation.sixOClock:
+      case CropRotation.up:
+      case CropRotation.down:
         return false;
-      case CropRotation.threeOClock:
-      case CropRotation.nineOClock:
+      case CropRotation.right:
+      case CropRotation.left:
         return true;
     }
   }
@@ -94,22 +94,22 @@ extension CropRotationExtension on CropRotation {
     final double noonHeight,
   ) {
     switch (this) {
-      case CropRotation.noon:
+      case CropRotation.up:
         return Offset(
           noonWidth * offset01.dx,
           noonHeight * offset01.dy,
         );
-      case CropRotation.sixOClock:
+      case CropRotation.down:
         return Offset(
           noonWidth * (1 - offset01.dx),
           noonHeight * (1 - offset01.dy),
         );
-      case CropRotation.threeOClock:
+      case CropRotation.right:
         return Offset(
           noonWidth * offset01.dy,
           noonHeight * (1 - offset01.dx),
         );
-      case CropRotation.nineOClock:
+      case CropRotation.left:
         return Offset(
           noonWidth * (1 - offset01.dy),
           noonHeight * offset01.dx,
