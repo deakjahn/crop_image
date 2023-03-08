@@ -69,6 +69,21 @@ controller.crop = Rect.fromLTRB(0.05, 0.05, 0.95, 0.95);
  Note that if an `aspectRatio` was specified, all crop rectangles will be adjusted automatically to fit the
  required aspect ratio.
 
+## Rotation
+
+You can set the rotation of the crop rectangle to a specific orientation using the provided `CropRotation` values:
+
+```dart
+controller.rotation = CropRotation.right;
+```
+
+or rotating it (repeatedly) with:
+
+```dart
+controller.rotateLeft();
+controller.rotateRight();
+```
+
 ## Using the result
 
 The final crop rectangle decided by the user can be used in various ways. The base output of the widget
