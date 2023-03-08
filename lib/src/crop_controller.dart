@@ -156,11 +156,24 @@ class CropController extends ValueNotifier<CropControllerValue> {
     if (aspectRatio == null) {
       return crop;
     }
+    final bool justRotated = rotation != null;
     rotation ??= value.rotation;
     final bitmapWidth =
         rotation.isSideways ? _bitmapSize.height : _bitmapSize.width;
     final bitmapHeight =
         rotation.isSideways ? _bitmapSize.width : _bitmapSize.height;
+    if (justRotated) {
+      // we've just rotated: in that case, biggest centered crop.
+      const center = Offset(.5, .5);
+      final width = bitmapWidth;
+      final height = bitmapHeight;
+      if (width / height > aspectRatio) {
+        final w = height * aspectRatio / bitmapWidth;
+        return Rect.fromCenter(center: center, width: w, height: 1);
+      }
+      final h = width / aspectRatio / bitmapHeight;
+      return Rect.fromCenter(center: center, width: 1, height: h);
+    }
     final width = crop.width * bitmapWidth;
     final height = crop.height * bitmapHeight;
     if (width / height > aspectRatio) {

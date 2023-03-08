@@ -99,6 +99,10 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const Text('2:1'),
             ),
             SimpleDialogOption(
+              onPressed: () => Navigator.pop(context, 1 / 2),
+              child: const Text('1:2'),
+            ),
+            SimpleDialogOption(
               onPressed: () => Navigator.pop(context, 4.0 / 3.0),
               child: const Text('4:3'),
             ),
