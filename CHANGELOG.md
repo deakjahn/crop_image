@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.5] - 2023-04-15
+
+* Fix [#23](https://github.com/deakjahn/crop_image/issues/23).
+
 ## [1.0.4] - 2023-03-08
 
 * Implement [#16](https://github.com/deakjahn/crop_image/pull/16).
