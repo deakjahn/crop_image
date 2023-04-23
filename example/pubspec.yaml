@@ -12,8 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  crop_image:
-    path: ../
+  crop_image: ^1.0.5
   cupertino_icons: ^1.0.5
 
 dev_dependencies:
@@ -21,6 +20,10 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^2.0.1
+
+dev_dependency_overrides:
+  crop_image:
+    path: ../
 
 flutter:
   uses-material-design: true
