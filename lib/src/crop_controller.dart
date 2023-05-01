@@ -194,7 +194,7 @@ class CropController extends ValueNotifier<CropControllerValue> {
     final double? maxSize,
     final ui.FilterQuality quality = FilterQuality.high,
   }) async =>
-      _getCroppedBitmap(
+      getCroppedBitmap(
         maxSize: maxSize,
         quality: quality,
         crop: crop,
@@ -207,7 +207,7 @@ class CropController extends ValueNotifier<CropControllerValue> {
   /// [maxSize] is the maximum width or height you want.
   /// The [crop] `Rect` is normalized to (0, 0) x (1, 1).
   /// You can provide the [quality] used in the resizing operation.
-  static Future<ui.Image> _getCroppedBitmap({
+  static Future<ui.Image> getCroppedBitmap({
     final double? maxSize,
     final ui.FilterQuality quality = FilterQuality.high,
     required final Rect crop,
