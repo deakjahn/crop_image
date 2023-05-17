@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.7] - 2023-05-17
+
+* Version upgrades (SDK 3)
+ 
 ## [1.0.6] - 2023-05-01
 
 * Implement [#25](https://github.com/deakjahn/crop_image/pull/25).
