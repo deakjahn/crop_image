@@ -1,11 +1,11 @@
 name: crop_image
 description: An image cropper widget, with 90-degree rotations. Supports mobile, web and desktop.
-version: 1.0.7
+version: 1.0.8
 homepage: https://github.com/deakjahn/crop_image
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=2.17.0 <4.0.0"
+  flutter: ">=1.17.0"
 
 dependencies:
   flutter:

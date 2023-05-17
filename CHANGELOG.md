@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.8] - 2023-05-17
+
+* Revert to broader Flutter version range
+
 ## [1.0.7] - 2023-05-17
 
 * Version upgrades (SDK 3)
