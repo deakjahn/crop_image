@@ -4,7 +4,6 @@ import 'crop_rect.dart';
 import 'crop_rotation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 
 /// A controller to control the functionality of [CropImage].
 class CropController extends ValueNotifier<CropControllerValue> {
@@ -100,7 +99,6 @@ class CropController extends ValueNotifier<CropControllerValue> {
   ui.Image? _bitmap;
   late Size _bitmapSize;
 
-  @internal
   set image(ui.Image newImage) {
     _bitmap = newImage;
     _bitmapSize = Size(newImage.width.toDouble(), newImage.height.toDouble());

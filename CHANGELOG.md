@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.9] - 2023-06-02
+
+* Fix [#26](https://github.com/deakjahn/crop_image/issues/26).
+
 ## [1.0.8] - 2023-05-17
 
 * Revert to broader Flutter version range
