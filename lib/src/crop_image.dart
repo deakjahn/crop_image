@@ -176,7 +176,11 @@ class _CropImageState extends State<CropImage> {
   @override
   void dispose() {
     controller.removeListener(onChange);
-    controller.dispose();
+
+    if (widget.controller == null) {
+      controller.dispose();
+    }
+
     _stream.removeListener(_streamListener);
 
     super.dispose();
