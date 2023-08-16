@@ -19,9 +19,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.1
+  flutter_lints: ^2.0.2
 
-dev_dependency_overrides:
+dependency_overrides:
   crop_image:
     path: ../
 
