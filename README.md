@@ -23,23 +23,23 @@ CropImage(
   /// The image to be cropped. Use [Image.file] or [Image.network] or any other [Image].
   image: Image.asset('...'),
   /// The crop grid color. Defaults to 70% white.
-  final Color gridColor: Colors.white;
+  gridColor: Colors.white,
   /// The size of the corner of the crop grid. Defaults to 25.
-  gridCornerSize: 50;
+  gridCornerSize: 50,
   /// The width of the crop grid thin lines. Defaults to 2.
-  gridThinWidth: 3;
+  gridThinWidth: 3,
   /// The width of the crop grid thick lines. Defaults to 5.
-  gridThickWidth: 6;
+  gridThickWidth: 6,
   /// The crop grid scrim (outside area overlay) color. Defaults to 54% black.
-  scrimColor: Colors.gainsboro;
+  scrimColor: Colors.grey.withOpacity(0.5),
   /// True: Always show third lines of the crop grid.
   /// False: third lines are only displayed while the user manipulates the grid (default).
-  alwaysShowThirdLines: true;
+  alwaysShowThirdLines: true,
   /// Event called when the user changes the crop rectangle.
   /// The passed [Rect] is normalized between 0 and 1.
-  onCrop: (rect) => print(rect);
+  onCrop: (rect) => print(rect),
   /// The minimum pixel size the crop rectangle can be shrunk to. Defaults to 100.
-  minimumImageSize: 50;
+  minimumImageSize: 50,
 );
 ```
 
