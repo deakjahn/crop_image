@@ -24,9 +24,9 @@ CropImage(
   image: Image.asset('...'),
   /// The crop grid color of the outer lines. Defaults to 70% white.
   gridColor: Colors.white,
-  /// The crop grid color of the inner lines. Defaults to `gridColor`.
+  /// The crop grid color of the inner lines. Defaults to [gridColor].
   gridInnerColor: Colors.white,
-  /// The crop grid color of the corner lines. Defaults to `gridColor`.
+  /// The crop grid color of the corner lines. Defaults to [gridColor].
   gridCornerColor: Colors.white,
   /// The size of the corner of the crop grid. Defaults to 25.
   gridCornerSize: 50,
