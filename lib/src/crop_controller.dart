@@ -59,8 +59,11 @@ class CropController extends ValueNotifier<CropControllerValue> {
   void rotateLeft() => _rotate(left: true);
 
   void _rotate({required final bool left}) {
-    final CropRotation newRotation = left ? value.rotation.rotateLeft : value.rotation.rotateRight;
-    final Offset newCenter = left ? Offset(crop.center.dy, 1 - crop.center.dx) : Offset(1 - crop.center.dy, crop.center.dx);
+    final CropRotation newRotation =
+        left ? value.rotation.rotateLeft : value.rotation.rotateRight;
+    final Offset newCenter = left
+        ? Offset(crop.center.dy, 1 - crop.center.dx)
+        : Offset(1 - crop.center.dy, crop.center.dx);
     value = CropControllerValue(
       aspectRatio,
       _adjustRatio(
@@ -121,12 +124,18 @@ class CropController extends ValueNotifier<CropControllerValue> {
     CropRotation rotation = CropRotation.up,
     double minimumImageSize = 100,
   })  : assert(aspectRatio != 0, 'aspectRatio cannot be zero'),
-        assert(defaultCrop.left >= 0 && defaultCrop.left <= 1, 'left should be 0..1'),
-        assert(defaultCrop.right >= 0 && defaultCrop.right <= 1, 'right should be 0..1'),
-        assert(defaultCrop.top >= 0 && defaultCrop.top <= 1, 'top should be 0..1'),
-        assert(defaultCrop.bottom >= 0 && defaultCrop.bottom <= 1, 'bottom should be 0..1'),
-        assert(defaultCrop.left < defaultCrop.right, 'left must be less than right'),
-        assert(defaultCrop.top < defaultCrop.bottom, 'top must be less than bottom'),
+        assert(defaultCrop.left >= 0 && defaultCrop.left <= 1,
+            'left should be 0..1'),
+        assert(defaultCrop.right >= 0 && defaultCrop.right <= 1,
+            'right should be 0..1'),
+        assert(
+            defaultCrop.top >= 0 && defaultCrop.top <= 1, 'top should be 0..1'),
+        assert(defaultCrop.bottom >= 0 && defaultCrop.bottom <= 1,
+            'bottom should be 0..1'),
+        assert(defaultCrop.left < defaultCrop.right,
+            'left must be less than right'),
+        assert(defaultCrop.top < defaultCrop.bottom,
+            'top must be less than bottom'),
         super(CropControllerValue(
           aspectRatio,
           defaultCrop,
@@ -147,8 +156,10 @@ class CropController extends ValueNotifier<CropControllerValue> {
     }
     final bool justRotated = rotation != null;
     rotation ??= value.rotation;
-    final bitmapWidth = rotation.isSideways ? _bitmapSize.height : _bitmapSize.width;
-    final bitmapHeight = rotation.isSideways ? _bitmapSize.width : _bitmapSize.height;
+    final bitmapWidth =
+        rotation.isSideways ? _bitmapSize.height : _bitmapSize.width;
+    final bitmapHeight =
+        rotation.isSideways ? _bitmapSize.width : _bitmapSize.height;
     if (justRotated) {
       // we've just rotated: in that case, biggest centered crop.
       const center = Offset(.5, .5);
@@ -276,14 +287,17 @@ class CropController extends ValueNotifier<CropControllerValue> {
     }
 
     //FIXME Picture.toImage() crashes on Flutter Web with the HTML renderer. Use CanvasKit or avoid this operation for now. https://github.com/flutter/engine/pull/20750
-    return await pictureRecorder.endRecording().toImage((cropWidth * factor).round(), (cropHeight * factor).round());
+    return await pictureRecorder
+        .endRecording()
+        .toImage((cropWidth * factor).round(), (cropHeight * factor).round());
   }
 
   /// Returns the image cropped with the current crop rectangle.
   ///
   /// You can provide the [quality] used in the resizing operation.
   /// Returns an [Image] asynchronously.
-  Future<Image> croppedImage({ui.FilterQuality quality = FilterQuality.high}) async {
+  Future<Image> croppedImage(
+      {ui.FilterQuality quality = FilterQuality.high}) async {
     return Image(
       image: UiImageProvider(await croppedBitmap(quality: quality)),
       fit: BoxFit.contain,
@@ -323,7 +337,11 @@ class CropControllerValue {
     if (identical(this, other)) {
       return true;
     }
-    return other is CropControllerValue && other.aspectRatio == aspectRatio && other.crop == crop && other.rotation == rotation && other.minimumImageSize == minimumImageSize;
+    return other is CropControllerValue &&
+        other.aspectRatio == aspectRatio &&
+        other.crop == crop &&
+        other.rotation == rotation &&
+        other.minimumImageSize == minimumImageSize;
   }
 
   @override
@@ -346,10 +364,13 @@ class UiImageProvider extends ImageProvider<UiImageProvider> {
   const UiImageProvider(this.image);
 
   @override
-  Future<UiImageProvider> obtainKey(ImageConfiguration configuration) => SynchronousFuture<UiImageProvider>(this);
+  Future<UiImageProvider> obtainKey(ImageConfiguration configuration) =>
+      SynchronousFuture<UiImageProvider>(this);
 
   @override
-  ImageStreamCompleter loadImage(UiImageProvider key, ImageDecoderCallback decode) => OneFrameImageStreamCompleter(_loadAsync(key));
+  ImageStreamCompleter loadImage(
+          UiImageProvider key, ImageDecoderCallback decode) =>
+      OneFrameImageStreamCompleter(_loadAsync(key));
 
   Future<ImageInfo> _loadAsync(UiImageProvider key) async {
     assert(key == this);

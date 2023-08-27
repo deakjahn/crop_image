@@ -23,10 +23,20 @@ class CropImage extends StatefulWidget {
   /// The image to be cropped.
   final Image image;
 
-  /// The crop grid color.
+  /// The crop grid color of the outer lines.
   ///
   /// Defaults to 70% white.
   final Color gridColor;
+
+  /// The crop grid color of the inner lines.
+  ///
+  /// Defaults to `gridColor`.
+  final Color gridInnerColor;
+
+  /// The crop grid color of the corner lines.
+  ///
+  /// Defaults to `gridColor`.
+  final Color gridCornerColor;
 
   /// The size of the padding around the image and crop grid.
   ///
@@ -88,6 +98,8 @@ class CropImage extends StatefulWidget {
     this.controller,
     required this.image,
     this.gridColor = Colors.white70,
+    Color? gridInnerColor,
+    Color? gridCornerColor,
     this.paddingSize = 0,
     this.touchSize = 50,
     this.gridCornerSize = 25,
@@ -98,7 +110,9 @@ class CropImage extends StatefulWidget {
     this.onCrop,
     this.minimumImageSize = 100,
     this.alwaysMove = false,
-  })  : assert(gridCornerSize > 0, 'gridCornerSize cannot be zero'),
+  })  : gridInnerColor = gridInnerColor ?? gridColor,
+        gridCornerColor = gridCornerColor ?? gridColor,
+        assert(gridCornerSize > 0, 'gridCornerSize cannot be zero'),
         assert(touchSize > 0, 'touchSize cannot be zero'),
         assert(gridThinWidth > 0, 'gridThinWidth cannot be zero'),
         assert(gridThickWidth > 0, 'gridThickWidth cannot be zero'),
@@ -116,6 +130,10 @@ class CropImage extends StatefulWidget {
         defaultValue: null));
     properties.add(DiagnosticsProperty<Image>('image', image));
     properties.add(DiagnosticsProperty<Color>('gridColor', gridColor));
+    properties
+        .add(DiagnosticsProperty<Color>('gridInnerColor', gridInnerColor));
+    properties
+        .add(DiagnosticsProperty<Color>('gridCornerColor', gridCornerColor));
     properties.add(DiagnosticsProperty<double>('paddingSize', paddingSize));
     properties.add(DiagnosticsProperty<double>('touchSize', touchSize));
     properties
@@ -261,7 +279,9 @@ class _CropImageState extends State<CropImage> {
                     onPanEnd: onPanEnd,
                     child: CropGrid(
                       crop: currentCrop,
-                      gridcolor: widget.gridColor,
+                      gridColor: widget.gridColor,
+                      gridInnerColor: widget.gridInnerColor,
+                      gridCornerColor: widget.gridCornerColor,
                       paddingSize: widget.paddingSize,
                       cornerSize: widget.gridCornerSize,
                       thinWidth: widget.gridThinWidth,
@@ -378,7 +398,7 @@ class _CropImageState extends State<CropImage> {
         assert(false);
     }
 
-    //FIXME: does not work with non-noon "rotation"
+    //FIXME: does not work with non-straight "rotation"
     if (controller.aspectRatio != null) {
       final width = right - left;
       final height = bottom - top;

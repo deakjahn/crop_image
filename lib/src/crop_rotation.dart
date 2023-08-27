@@ -90,29 +90,29 @@ extension CropRotationExtension on CropRotation {
   /// Returns the offset as rotated.
   Offset getRotatedOffset(
     final Offset offset01,
-    final double noonWidth,
-    final double noonHeight,
+    final double straightWidth,
+    final double straightHeight,
   ) {
     switch (this) {
       case CropRotation.up:
         return Offset(
-          noonWidth * offset01.dx,
-          noonHeight * offset01.dy,
+          straightWidth * offset01.dx,
+          straightHeight * offset01.dy,
         );
       case CropRotation.down:
         return Offset(
-          noonWidth * (1 - offset01.dx),
-          noonHeight * (1 - offset01.dy),
+          straightWidth * (1 - offset01.dx),
+          straightHeight * (1 - offset01.dy),
         );
       case CropRotation.right:
         return Offset(
-          noonWidth * offset01.dy,
-          noonHeight * (1 - offset01.dx),
+          straightWidth * offset01.dy,
+          straightHeight * (1 - offset01.dx),
         );
       case CropRotation.left:
         return Offset(
-          noonWidth * (1 - offset01.dy),
-          noonHeight * offset01.dx,
+          straightWidth * (1 - offset01.dy),
+          straightHeight * offset01.dx,
         );
     }
   }

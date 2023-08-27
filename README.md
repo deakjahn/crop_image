@@ -22,8 +22,12 @@ CropImage(
   controller: controller,
   /// The image to be cropped. Use [Image.file] or [Image.network] or any other [Image].
   image: Image.asset('...'),
-  /// The crop grid color. Defaults to 70% white.
+  /// The crop grid color of the outer lines. Defaults to 70% white.
   gridColor: Colors.white,
+  /// The crop grid color of the inner lines. Defaults to `gridColor`.
+  gridInnerColor: Colors.white,
+  /// The crop grid color of the corner lines. Defaults to `gridColor`.
+  gridCornerColor: Colors.white,
   /// The size of the corner of the crop grid. Defaults to 25.
   gridCornerSize: 50,
   /// The width of the crop grid thin lines. Defaults to 2.

@@ -6,7 +6,9 @@ import 'crop_rect.dart';
 /// Crop Grid with invisible border, for better touch detection.
 class CropGrid extends StatelessWidget {
   final Rect crop;
-  final Color gridcolor;
+  final Color gridColor;
+  final Color gridInnerColor;
+  final Color gridCornerColor;
   final double paddingSize;
   final double cornerSize;
   final double thinWidth;
@@ -19,7 +21,9 @@ class CropGrid extends StatelessWidget {
   const CropGrid({
     Key? key,
     required this.crop,
-    required this.gridcolor,
+    required this.gridColor,
+    required this.gridInnerColor,
+    required this.gridCornerColor,
     required this.paddingSize,
     required this.cornerSize,
     required this.thinWidth,
@@ -86,62 +90,66 @@ class _CropGridPainter extends CustomPainter {
             bounds.bottomRight.translate(-grid.cornerSize, 0)
           ], false),
         Paint()
-          ..color = grid.gridcolor
+          ..color = grid.gridCornerColor
           ..style = PaintingStyle.stroke
           ..strokeWidth = grid.thickWidth
           ..strokeCap = StrokeCap.round
           ..strokeJoin = StrokeJoin.miter
           ..isAntiAlias = true);
 
-    final path = Path() //
-      ..addPolygon([
-        bounds.topLeft.translate(grid.cornerSize, 0),
-        bounds.topRight.translate(-grid.cornerSize, 0)
-      ], false)
-      ..addPolygon([
-        bounds.bottomLeft.translate(grid.cornerSize, 0),
-        bounds.bottomRight.translate(-grid.cornerSize, 0)
-      ], false)
-      ..addPolygon([
-        bounds.topLeft.translate(0, grid.cornerSize),
-        bounds.bottomLeft.translate(0, -grid.cornerSize)
-      ], false)
-      ..addPolygon([
-        bounds.topRight.translate(0, grid.cornerSize),
-        bounds.bottomRight.translate(0, -grid.cornerSize)
-      ], false);
+    canvas.drawPath(
+        Path() //
+          ..addPolygon([
+            bounds.topLeft.translate(grid.cornerSize, 0),
+            bounds.topRight.translate(-grid.cornerSize, 0)
+          ], false)
+          ..addPolygon([
+            bounds.bottomLeft.translate(grid.cornerSize, 0),
+            bounds.bottomRight.translate(-grid.cornerSize, 0)
+          ], false)
+          ..addPolygon([
+            bounds.topLeft.translate(0, grid.cornerSize),
+            bounds.bottomLeft.translate(0, -grid.cornerSize)
+          ], false)
+          ..addPolygon([
+            bounds.topRight.translate(0, grid.cornerSize),
+            bounds.bottomRight.translate(0, -grid.cornerSize)
+          ], false),
+        Paint()
+          ..color = grid.gridColor
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = grid.thinWidth
+          ..strokeCap = StrokeCap.butt
+          ..isAntiAlias = true);
 
     if (grid.isMoving || grid.alwaysShowThirdLines) {
       final thirdHeight = bounds.height / 3.0;
-      path.addPolygon([
-        bounds.topLeft.translate(0, thirdHeight),
-        bounds.topRight.translate(0, thirdHeight)
-      ], false);
-      path.addPolygon([
-        bounds.bottomLeft.translate(0, -thirdHeight),
-        bounds.bottomRight.translate(0, -thirdHeight)
-      ], false);
-
       final thirdWidth = bounds.width / 3.0;
-      path.addPolygon([
-        bounds.topLeft.translate(thirdWidth, 0),
-        bounds.bottomLeft.translate(thirdWidth, 0)
-      ], false);
-      path.addPolygon([
-        bounds.topRight.translate(-thirdWidth, 0),
-        bounds.bottomRight.translate(-thirdWidth, 0)
-      ], false);
+      canvas.drawPath(
+          Path() //
+            ..addPolygon([
+              bounds.topLeft.translate(0, thirdHeight),
+              bounds.topRight.translate(0, thirdHeight)
+            ], false)
+            ..addPolygon([
+              bounds.bottomLeft.translate(0, -thirdHeight),
+              bounds.bottomRight.translate(0, -thirdHeight)
+            ], false)
+            ..addPolygon([
+              bounds.topLeft.translate(thirdWidth, 0),
+              bounds.bottomLeft.translate(thirdWidth, 0)
+            ], false)
+            ..addPolygon([
+              bounds.topRight.translate(-thirdWidth, 0),
+              bounds.bottomRight.translate(-thirdWidth, 0)
+            ], false),
+          Paint()
+            ..color = grid.gridInnerColor
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = grid.thinWidth
+            ..strokeCap = StrokeCap.butt
+            ..isAntiAlias = true);
     }
-
-    canvas.drawPath(
-        path,
-        Paint()
-          ..color = grid.gridcolor
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = grid.thinWidth
-          ..strokeCap = StrokeCap.round
-          ..strokeJoin = StrokeJoin.miter
-          ..isAntiAlias = true);
   }
 
   @override
