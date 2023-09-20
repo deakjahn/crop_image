@@ -90,8 +90,10 @@ class CropImage extends StatefulWidget {
 
   /// The maximum pixel size the crop rectangle can be grown to.
   ///
-  /// Defaults to infinity. By setting both [minimumImageSize] and [maximumImageSize] to the same value,
-  /// you can effectively constrain the crop rectangle to a fixed size.
+  /// Defaults to infinity.
+  /// You can constrain the crop rectangle to a fixed size by setting
+  /// both [minimumImageSize] and [maximumImageSize] to the same value (the width) and using
+  /// the [aspectRatio] of the controller to force the other dimension (width / height).
   /// Doing so disables the display of the corners.
   final double maximumImageSize;
 
