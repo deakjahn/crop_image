@@ -44,6 +44,10 @@ CropImage(
   onCrop: (rect) => print(rect),
   /// The minimum pixel size the crop rectangle can be shrunk to. Defaults to 100.
   minimumImageSize: 50,
+  /// The maximum pixel size the crop rectangle can be grown to. Defaults to infinity.
+  /// By setting both [minimumImageSize] and [maximumImageSize] to the same value,
+  /// you can effectively constrain the crop rectangle to a fixed size.
+  maximumImageSize: 2000;
 );
 ```
 

@@ -88,8 +88,14 @@ class CropImage extends StatefulWidget {
   /// Defaults to 100.
   final double minimumImageSize;
 
-  /// When `true`, moves when panning beyond corners, even beyond the crop rect.
+  /// The maximum pixel size the crop rectangle can be grown to.
   ///
+  /// Defaults to infinity. By setting both [minimumImageSize] and [maximumImageSize] to the same value,
+  /// you can effectively constrain the crop rectangle to a fixed size.
+  /// Doing so disables the display of the corners.
+  final double maximumImageSize;
+
+  /// When `true`, moves when panning beyond corners, even beyond the crop rect.
   /// When `false`, moves when panning beyond corners but inside the crop rect.
   final bool alwaysMove;
 
@@ -109,6 +115,7 @@ class CropImage extends StatefulWidget {
     this.alwaysShowThirdLines = false,
     this.onCrop,
     this.minimumImageSize = 100,
+    this.maximumImageSize = double.infinity,
     this.alwaysMove = false,
   })  : gridInnerColor = gridInnerColor ?? gridColor,
         gridCornerColor = gridCornerColor ?? gridColor,
@@ -117,6 +124,8 @@ class CropImage extends StatefulWidget {
         assert(gridThinWidth > 0, 'gridThinWidth cannot be zero'),
         assert(gridThickWidth > 0, 'gridThickWidth cannot be zero'),
         assert(minimumImageSize > 0, 'minimumImageSize cannot be zero'),
+        assert(maximumImageSize >= minimumImageSize,
+            'maximumImageSize cannot be less than minimumImageSize'),
         super(key: key);
 
   @override
@@ -148,6 +157,8 @@ class CropImage extends StatefulWidget {
         defaultValue: null));
     properties
         .add(DiagnosticsProperty<double>('minimumImageSize', minimumImageSize));
+    properties
+        .add(DiagnosticsProperty<double>('maximumImageSize', maximumImageSize));
     properties.add(DiagnosticsProperty<bool>('alwaysMove', alwaysMove));
   }
 }
@@ -257,6 +268,8 @@ class _CropImageState extends State<CropImage> {
             final double width = _getWidth(maxWidth, maxHeight);
             final double height = _getHeight(maxWidth, maxHeight);
             size = Size(width, height);
+            final bool showCorners =
+                widget.minimumImageSize != widget.maximumImageSize;
             return Stack(
               alignment: Alignment.center,
               children: <Widget>[
@@ -283,10 +296,11 @@ class _CropImageState extends State<CropImage> {
                       gridInnerColor: widget.gridInnerColor,
                       gridCornerColor: widget.gridCornerColor,
                       paddingSize: widget.paddingSize,
-                      cornerSize: widget.gridCornerSize,
+                      cornerSize: showCorners ? widget.gridCornerSize : 0,
                       thinWidth: widget.gridThinWidth,
                       thickWidth: widget.gridThickWidth,
                       scrimColor: widget.scrimColor,
+                      showCorners: showCorners,
                       alwaysShowThirdLines: widget.alwaysShowThirdLines,
                       isMoving: panStart != null,
                       onSize: (size) {
@@ -379,20 +393,32 @@ class _CropImageState extends State<CropImage> {
 
     switch (type) {
       case _CornerTypes.UpperLeft:
-        left = point.dx.clamp(0, right - widget.minimumImageSize);
-        top = point.dy.clamp(0, bottom - widget.minimumImageSize);
+        left = point.dx.clamp(right - widget.maximumImageSize,
+            point.dx.clamp(0, right - widget.minimumImageSize));
+        top = point.dy.clamp(bottom - widget.maximumImageSize,
+            point.dy.clamp(0, bottom - widget.minimumImageSize));
         break;
       case _CornerTypes.UpperRight:
-        right = point.dx.clamp(left + widget.minimumImageSize, size.width);
-        top = point.dy.clamp(0, bottom - widget.minimumImageSize);
+        right = point.dx.clamp(
+            point.dx.clamp(left + widget.minimumImageSize, size.width),
+            left + widget.maximumImageSize);
+        top = point.dy.clamp(bottom - widget.maximumImageSize,
+            point.dy.clamp(0, bottom - widget.minimumImageSize));
         break;
       case _CornerTypes.LowerRight:
-        right = point.dx.clamp(left + widget.minimumImageSize, size.width);
-        bottom = point.dy.clamp(top + widget.minimumImageSize, size.height);
+        right = point.dx.clamp(
+            point.dx.clamp(left + widget.minimumImageSize, size.width),
+            left + widget.maximumImageSize);
+        bottom = point.dy.clamp(
+            point.dy.clamp(top + widget.minimumImageSize, size.height),
+            top + widget.maximumImageSize);
         break;
       case _CornerTypes.LowerLeft:
-        left = point.dx.clamp(0, right - widget.minimumImageSize);
-        bottom = point.dy.clamp(top + widget.minimumImageSize, size.height);
+        left = point.dx.clamp(right - widget.maximumImageSize,
+            point.dx.clamp(0, right - widget.minimumImageSize));
+        bottom = point.dy.clamp(
+            point.dy.clamp(top + widget.minimumImageSize, size.height),
+            top + widget.maximumImageSize);
         break;
       default:
         assert(false);

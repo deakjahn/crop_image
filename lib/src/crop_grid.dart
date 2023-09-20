@@ -14,6 +14,7 @@ class CropGrid extends StatelessWidget {
   final double thinWidth;
   final double thickWidth;
   final Color scrimColor;
+  final bool showCorners;
   final bool alwaysShowThirdLines;
   final bool isMoving;
   final ValueChanged<Size> onSize;
@@ -29,6 +30,7 @@ class CropGrid extends StatelessWidget {
     required this.thinWidth,
     required this.thickWidth,
     required this.scrimColor,
+    required this.showCorners,
     required this.alwaysShowThirdLines,
     required this.isMoving,
     required this.onSize,
@@ -67,35 +69,36 @@ class _CropGridPainter extends CustomPainter {
           ..isAntiAlias = true);
     canvas.restore();
 
-    canvas.drawPath(
-        Path() //
-          ..addPolygon([
-            bounds.topLeft.translate(0, grid.cornerSize),
-            bounds.topLeft,
-            bounds.topLeft.translate(grid.cornerSize, 0)
-          ], false)
-          ..addPolygon([
-            bounds.topRight.translate(0, grid.cornerSize),
-            bounds.topRight,
-            bounds.topRight.translate(-grid.cornerSize, 0)
-          ], false)
-          ..addPolygon([
-            bounds.bottomLeft.translate(0, -grid.cornerSize),
-            bounds.bottomLeft,
-            bounds.bottomLeft.translate(grid.cornerSize, 0)
-          ], false)
-          ..addPolygon([
-            bounds.bottomRight.translate(0, -grid.cornerSize),
-            bounds.bottomRight,
-            bounds.bottomRight.translate(-grid.cornerSize, 0)
-          ], false),
-        Paint()
-          ..color = grid.gridCornerColor
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = grid.thickWidth
-          ..strokeCap = StrokeCap.round
-          ..strokeJoin = StrokeJoin.miter
-          ..isAntiAlias = true);
+    if (grid.showCorners)
+      canvas.drawPath(
+          Path() //
+            ..addPolygon([
+              bounds.topLeft.translate(0, grid.cornerSize),
+              bounds.topLeft,
+              bounds.topLeft.translate(grid.cornerSize, 0)
+            ], false)
+            ..addPolygon([
+              bounds.topRight.translate(0, grid.cornerSize),
+              bounds.topRight,
+              bounds.topRight.translate(-grid.cornerSize, 0)
+            ], false)
+            ..addPolygon([
+              bounds.bottomLeft.translate(0, -grid.cornerSize),
+              bounds.bottomLeft,
+              bounds.bottomLeft.translate(grid.cornerSize, 0)
+            ], false)
+            ..addPolygon([
+              bounds.bottomRight.translate(0, -grid.cornerSize),
+              bounds.bottomRight,
+              bounds.bottomRight.translate(-grid.cornerSize, 0)
+            ], false),
+          Paint()
+            ..color = grid.gridCornerColor
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = grid.thickWidth
+            ..strokeCap = StrokeCap.round
+            ..strokeJoin = StrokeJoin.miter
+            ..isAntiAlias = true);
 
     canvas.drawPath(
         Path() //
