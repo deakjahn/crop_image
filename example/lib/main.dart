@@ -27,7 +27,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final controller = CropController(
-    aspectRatio: 1,
+    aspectRatio: 0.7,
     defaultCrop: const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9),
   );
 
@@ -42,6 +42,8 @@ class _MyHomePageState extends State<MyHomePage> {
             image: Image.asset('assets/08272011229.jpg'),
             paddingSize: 25.0,
             alwaysMove: true,
+            minimumImageSize: 500,
+            maximumImageSize: 500,
           ),
         ),
         bottomNavigationBar: _buildButtons(),

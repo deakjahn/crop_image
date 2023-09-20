@@ -45,10 +45,6 @@ CropImage(
   /// The minimum pixel size the crop rectangle can be shrunk to. Defaults to 100.
   minimumImageSize: 50,
   /// The maximum pixel size the crop rectangle can be grown to. Defaults to infinity.
-  /// You can constrain the crop rectangle to a fixed size by setting
-  /// both [minimumImageSize] and [maximumImageSize] to the same value (the width) and using
-  /// the [aspectRatio] of the controller to force the other dimension (width / height).
-  /// Doing so disables the display of the corners.
   maximumImageSize: 2000;
 );
 ```
@@ -76,8 +72,14 @@ controller.aspectRatio = 16.0 / 9.0;
 controller.crop = Rect.fromLTRB(0.05, 0.05, 0.95, 0.95);
 ```
 
- Note that if an `aspectRatio` was specified, all crop rectangles will be adjusted automatically to fit the
- required aspect ratio.
+Note that if an `aspectRatio` was specified, all crop rectangles will be adjusted automatically to fit the
+required aspect ratio.
+
+## Fixed crop size
+
+You can constrain the crop rectangle to a fixed size by setting both `minimumImageSize` and `maximumImageSize`
+to the same value (the width) and using the `aspectRatio` of the controller to force the other dimension (width / height).
+Doing so disables the display of the corners.
 
 ## Rotation
 
