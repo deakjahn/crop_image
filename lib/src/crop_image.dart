@@ -495,6 +495,7 @@ class _RotatedImagePainter extends CustomPainter {
       canvas.rotate(rotation.radians);
       canvas.translate(-targetWidth / 2, -targetHeight / 2);
     }
+    _paint.filterQuality = FilterQuality.high;
     canvas.drawImageRect(
       image,
       Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
