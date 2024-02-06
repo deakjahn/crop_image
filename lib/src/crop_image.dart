@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'crop_controller.dart';
@@ -388,35 +389,57 @@ class _CropImageState extends State<CropImage> {
     var top = crop.top;
     var right = crop.right;
     var bottom = crop.bottom;
+    double minX, maxX;
+    double minY, maxY;
 
     switch (type) {
       case _CornerTypes.UpperLeft:
-        left = point.dx.clamp(right - widget.maximumImageSize,
-            point.dx.clamp(0, right - widget.minimumImageSize));
-        top = point.dy.clamp(bottom - widget.maximumImageSize,
-            point.dy.clamp(0, bottom - widget.minimumImageSize));
+        minX = math.max(0, right - widget.maximumImageSize);
+        maxX = right - widget.minimumImageSize;
+        if (minX <= maxX) {
+          left = point.dx.clamp(minX, maxX);
+        }
+        minY = math.max(0, bottom - widget.maximumImageSize);
+        maxY = bottom - widget.minimumImageSize;
+        if (minY <= maxY) {
+          top = point.dy.clamp(minY, maxY);
+        }
         break;
       case _CornerTypes.UpperRight:
-        right = point.dx.clamp(
-            point.dx.clamp(left + widget.minimumImageSize, size.width),
-            left + widget.maximumImageSize);
-        top = point.dy.clamp(bottom - widget.maximumImageSize,
-            point.dy.clamp(0, bottom - widget.minimumImageSize));
+        minX = left + widget.minimumImageSize;
+        maxX = math.min(left + widget.maximumImageSize, size.width);
+        if (minX <= maxX) {
+          right = point.dx.clamp(minX, maxX);
+        }
+        minY = math.max(0, bottom - widget.maximumImageSize);
+        maxY = bottom - widget.minimumImageSize;
+        if (minY <= maxY) {
+          top = point.dy.clamp(minY, maxY);
+        }
         break;
       case _CornerTypes.LowerRight:
-        right = point.dx.clamp(
-            point.dx.clamp(left + widget.minimumImageSize, size.width),
-            left + widget.maximumImageSize);
-        bottom = point.dy.clamp(
-            point.dy.clamp(top + widget.minimumImageSize, size.height),
-            top + widget.maximumImageSize);
+        minX = left + widget.minimumImageSize;
+        maxX = math.min(left + widget.maximumImageSize, size.width);
+        if (minX <= maxX) {
+          right = point.dx.clamp(minX, maxX);
+        }
+        minY = top + widget.minimumImageSize;
+        maxY = math.min(top + widget.maximumImageSize, size.height);
+        if (minY <= maxY) {
+          bottom = point.dy.clamp(minY, maxY);
+        }
         break;
       case _CornerTypes.LowerLeft:
-        left = point.dx.clamp(right - widget.maximumImageSize,
-            point.dx.clamp(0, right - widget.minimumImageSize));
-        bottom = point.dy.clamp(
-            point.dy.clamp(top + widget.minimumImageSize, size.height),
-            top + widget.maximumImageSize);
+        minX = math.max(0, right - widget.maximumImageSize);
+        maxX = right - widget.minimumImageSize;
+        if (minX <= maxX) {
+          left = point.dx.clamp(minX, maxX);
+        }
+        minY = top + widget.minimumImageSize;
+        maxY = math.min(top + widget.maximumImageSize, size.height);
+        if (minY <= maxY) {
+          bottom = point.dy.clamp(minY, maxY);
+        }
         break;
       default:
         assert(false);
@@ -495,6 +518,7 @@ class _RotatedImagePainter extends CustomPainter {
       canvas.rotate(rotation.radians);
       canvas.translate(-targetWidth / 2, -targetHeight / 2);
     }
+    _paint.filterQuality = FilterQuality.high;
     canvas.drawImageRect(
       image,
       Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
