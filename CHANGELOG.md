@@ -1,8 +1,9 @@
 # Changelog
 
-## [1.0.12] - coming
+## [1.0.12] - 2024-02-06
 
 * Add `maximumImageSize`. Implement [#39](https://github.com/deakjahn/crop_image/issues/39).
+* Implement [#43](https://github.com/deakjahn/crop_image/issues/43).
 
 ## [1.0.11] - 2023-08-27
 
