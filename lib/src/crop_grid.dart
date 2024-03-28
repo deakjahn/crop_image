@@ -158,7 +158,11 @@ class _CropGridPainter extends CustomPainter {
   @override
   bool shouldRepaint(_CropGridPainter oldDelegate) =>
       oldDelegate.grid.crop != grid.crop || //
-      oldDelegate.grid.isMoving != grid.isMoving;
+      oldDelegate.grid.isMoving != grid.isMoving ||
+      oldDelegate.grid.cornerSize != grid.cornerSize ||
+      oldDelegate.grid.gridColor != grid.gridColor ||
+      oldDelegate.grid.gridCornerColor != grid.gridCornerColor ||
+      oldDelegate.grid.gridInnerColor != grid.gridInnerColor;
 
   @override
   bool hitTest(Offset position) => true;
