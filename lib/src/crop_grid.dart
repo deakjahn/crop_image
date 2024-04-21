@@ -11,10 +11,10 @@ class CropGrid extends StatelessWidget {
   final Color gridCornerColor;
   final double paddingSize;
   final double cornerSize;
+  final bool showCorners;
   final double thinWidth;
   final double thickWidth;
   final Color scrimColor;
-  final bool showCorners;
   final bool alwaysShowThirdLines;
   final bool isMoving;
   final ValueChanged<Size> onSize;

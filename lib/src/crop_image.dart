@@ -54,6 +54,11 @@ class CropImage extends StatefulWidget {
   /// Defaults to 25.
   final double gridCornerSize;
 
+  /// Whether to display the corners.
+  ///
+  /// Defaults to true.
+  final bool showCorners;
+
   /// The width of the crop grid thin lines.
   ///
   /// Defaults to 2.
@@ -112,6 +117,7 @@ class CropImage extends StatefulWidget {
     this.paddingSize = 0,
     this.touchSize = 50,
     this.gridCornerSize = 25,
+    this.showCorners = true,
     this.gridThinWidth = 2,
     this.gridThickWidth = 5,
     this.scrimColor = Colors.black54,
@@ -150,6 +156,7 @@ class CropImage extends StatefulWidget {
     properties.add(DiagnosticsProperty<double>('touchSize', touchSize));
     properties
         .add(DiagnosticsProperty<double>('gridCornerSize', gridCornerSize));
+    properties.add(DiagnosticsProperty<bool>('showCorners', showCorners));
     properties.add(DiagnosticsProperty<double>('gridThinWidth', gridThinWidth));
     properties
         .add(DiagnosticsProperty<double>('gridThickWidth', gridThickWidth));
@@ -271,7 +278,7 @@ class _CropImageState extends State<CropImage> {
             final double width = _getWidth(maxWidth, maxHeight);
             final double height = _getHeight(maxWidth, maxHeight);
             size = Size(width, height);
-            final bool showCorners =
+            final bool showCorners = widget.showCorners &&
                 widget.minimumImageSize != widget.maximumImageSize;
             return Stack(
               alignment: Alignment.center,

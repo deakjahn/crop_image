@@ -128,26 +128,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _finished() async {
     final image = await controller.croppedImage();
-    // ignore: use_build_context_synchronously
-    await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return SimpleDialog(
-          contentPadding: const EdgeInsets.all(6.0),
-          titlePadding: const EdgeInsets.all(8.0),
-          title: const Text('Cropped image'),
-          children: [
-            Text('relative: ${controller.crop}'),
-            Text('pixels: ${controller.cropSize}'),
-            const SizedBox(height: 5),
-            image,
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
+    if (mounted)
+      await showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            contentPadding: const EdgeInsets.all(6.0),
+            titlePadding: const EdgeInsets.all(8.0),
+            title: const Text('Cropped image'),
+            children: [
+              Text('relative: ${controller.crop}'),
+              Text('pixels: ${controller.cropSize}'),
+              const SizedBox(height: 5),
+              image,
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
   }
 }
