@@ -186,14 +186,14 @@ class CropController extends ValueNotifier<CropControllerValue> {
   /// Returns the bitmap cropped with the current crop rectangle.
   ///
   /// [maxSize] is the maximum width or height you want.
-  /// [additionalPainter] is an optional painter on top of the cropped image;
+  /// [overlayPainter] is an optional painter on top of the cropped image;
   /// could be used for special effects on the cropped area.
   /// You can provide the [quality] used in the resizing operation.
   /// Returns an [ui.Image] asynchronously.
   Future<ui.Image> croppedBitmap({
     final double? maxSize,
     final ui.FilterQuality quality = FilterQuality.high,
-    final CustomPainter? additionalPainter,
+    final CustomPainter? overlayPainter,
   }) async =>
       getCroppedBitmap(
         maxSize: maxSize,
@@ -201,13 +201,13 @@ class CropController extends ValueNotifier<CropControllerValue> {
         crop: crop,
         rotation: value.rotation,
         image: _bitmap!,
-        additionalPainter: additionalPainter,
+        overlayPainter: overlayPainter,
       );
 
   /// Returns the bitmap cropped with parameters.
   ///
   /// [maxSize] is the maximum width or height you want.
-  /// [additionalPainter] is an optional painter on top of the cropped image;
+  /// [overlayPainter] is an optional painter on top of the cropped image;
   /// could be used for special effects on the cropped area.
   /// The [crop] `Rect` is normalized to (0, 0) x (1, 1).
   /// You can provide the [quality] used in the resizing operation.
@@ -217,7 +217,7 @@ class CropController extends ValueNotifier<CropControllerValue> {
     required final Rect crop,
     required final CropRotation rotation,
     required final ui.Image image,
-    final CustomPainter? additionalPainter,
+    final CustomPainter? overlayPainter,
   }) async {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
@@ -295,7 +295,7 @@ class CropController extends ValueNotifier<CropControllerValue> {
 
     final double outputWidth = cropWidth * factor;
     final double outputHeight = cropHeight * factor;
-    additionalPainter?.paint(canvas, ui.Size(outputWidth, outputHeight));
+    overlayPainter?.paint(canvas, ui.Size(outputWidth, outputHeight));
 
     //FIXME Picture.toImage() crashes on Flutter Web with the HTML renderer. Use CanvasKit or avoid this operation for now. https://github.com/flutter/engine/pull/20750
     return await pictureRecorder.endRecording().toImage(
@@ -307,18 +307,18 @@ class CropController extends ValueNotifier<CropControllerValue> {
   /// Returns the image cropped with the current crop rectangle.
   ///
   /// You can provide the [quality] used in the resizing operation.
-  /// [additionalPainter] is an optional painter on top of the cropped image;
+  /// [overlayPainter] is an optional painter on top of the cropped image;
   /// could be used for special effects on the cropped area.
   /// Returns an [Image] asynchronously.
   Future<Image> croppedImage({
     ui.FilterQuality quality = FilterQuality.high,
-    final CustomPainter? additionalPainter,
+    final CustomPainter? overlayPainter,
   }) async {
     return Image(
       image: UiImageProvider(
         await croppedBitmap(
           quality: quality,
-          additionalPainter: additionalPainter,
+          overlayPainter: overlayPainter,
         ),
       ),
       fit: BoxFit.contain,
