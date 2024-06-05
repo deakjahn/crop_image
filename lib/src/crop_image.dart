@@ -107,6 +107,11 @@ class CropImage extends StatefulWidget {
   /// When `false`, moves when panning beyond corners but inside the crop rect.
   final bool alwaysMove;
 
+  /// An optional painter between the image and the crop grid.
+  ///
+  /// Could be used for special effects on the cropped area.
+  final CustomPainter? overlayPainter;
+
   const CropImage({
     Key? key,
     this.controller,
@@ -126,6 +131,7 @@ class CropImage extends StatefulWidget {
     this.minimumImageSize = 100,
     this.maximumImageSize = double.infinity,
     this.alwaysMove = false,
+    this.overlayPainter,
   })  : gridInnerColor = gridInnerColor ?? gridColor,
         gridCornerColor = gridCornerColor ?? gridColor,
         assert(gridCornerSize > 0, 'gridCornerSize cannot be zero'),
@@ -293,6 +299,12 @@ class _CropImageState extends State<CropImage> {
                     ),
                   ),
                 ),
+                if (widget.overlayPainter != null)
+                  SizedBox(
+                    width: width,
+                    height: height,
+                    child: CustomPaint(painter: widget.overlayPainter),
+                  ),
                 SizedBox(
                   width: width + 2 * widget.paddingSize,
                   height: height + 2 * widget.paddingSize,
