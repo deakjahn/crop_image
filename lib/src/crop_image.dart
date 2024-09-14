@@ -274,7 +274,7 @@ class _CropImageState extends State<CropImage> {
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             if (controller.getImage() == null) {
-              return const CircularProgressIndicator();
+              return const CircularProgressIndicator.adaptive();
             }
             // we remove the borders
             final double maxWidth =
