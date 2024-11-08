@@ -4,8 +4,6 @@ An image cropper widget. It provides the usual user experience of classic mobile
 image croppers but, as it's written completely in Dart, it doesn't depend on any mobile package.
 Consequently, it runs on all platforms supported by Flutter: mobile, web and desktop alike.
 
-![Screenshot](https://raw.githubusercontent.com/deakjahn/crop_image/master/example/assets/sample.gif "Screenshot")
-
 The appearance of the crop rectangle can be customized.
 
 ```dart
