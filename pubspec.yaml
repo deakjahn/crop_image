@@ -25,7 +25,7 @@ funding:
 
 screenshots:
   - description: 'Example of the widget.'
-    path: screenshots/sample.gif
+    path: screenshots/sample.png
 
 topics:
   - flutter
