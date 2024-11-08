@@ -24,7 +24,7 @@ funding:
   - https://buymeacoffee.com/deakjahn
 
 screenshots:
-  - description: 'Example.'
+  - description: 'Example of the widget.'
     path: screenshots/sample.gif
 
 topics:
