@@ -1,5 +1,7 @@
 # Crop Image
 
+[![pub package](https://img.shields.io/pub/v/crop_image.svg)](https://pub.dev/packages/crop_image)
+
 An image cropper widget. It provides the usual user experience of classic mobile and desktop
 image croppers but, as it's written completely in Dart, it doesn't depend on any mobile package.
 Consequently, it runs on all platforms supported by Flutter: mobile, web and desktop alike.
@@ -144,4 +146,4 @@ Consider using CanvasKit for the web renderer (which is much better than HTML, a
 
 If you like this package, please consider supporting it.
 
-[![buy me a book](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20book&emoji=📚&slug=deakjahn&button_colour=FF8838&font_colour=ffffff&font_family=Poppins&outline_colour=000000&coffee_colour=ffffff')](https://www.buymeacoffee.com/deakjahn)
+<a href="https://www.buymeacoffee.com/deakjahn" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Book" height="60" width="217"></a>
