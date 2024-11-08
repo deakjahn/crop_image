@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  crop_image: ^1.0.6
+  crop_image: ^1.0.14
   cupertino_icons: ^1.0.8
 
 dev_dependencies:

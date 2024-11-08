@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.14] - 2024-11-08
+
+* Pub.dev screenshot.
+* Funding.
+
 ## [1.0.13] - 2024-06-05
 
 * Implement [#53](https://github.com/deakjahn/crop_image/pull/53).
