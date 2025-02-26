@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.16] - coming
+## [1.0.16] - 2025-02-26
 
 * Implement [#54](https://github.com/deakjahn/crop_image/issues/54).
 

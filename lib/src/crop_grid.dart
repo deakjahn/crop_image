@@ -70,10 +70,26 @@ class _CropGridPainter extends CustomPainter {
     if (grid.showCorners)
       canvas.drawPath(
           Path() //
-            ..addPolygon([bounds.topLeft.translate(0, grid.cornerSize), bounds.topLeft, bounds.topLeft.translate(grid.cornerSize, 0)], false)
-            ..addPolygon([bounds.topRight.translate(0, grid.cornerSize), bounds.topRight, bounds.topRight.translate(-grid.cornerSize, 0)], false)
-            ..addPolygon([bounds.bottomLeft.translate(0, -grid.cornerSize), bounds.bottomLeft, bounds.bottomLeft.translate(grid.cornerSize, 0)], false)
-            ..addPolygon([bounds.bottomRight.translate(0, -grid.cornerSize), bounds.bottomRight, bounds.bottomRight.translate(-grid.cornerSize, 0)], false),
+            ..addPolygon([
+              bounds.topLeft.translate(0, grid.cornerSize),
+              bounds.topLeft,
+              bounds.topLeft.translate(grid.cornerSize, 0),
+            ], false)
+            ..addPolygon([
+              bounds.topRight.translate(0, grid.cornerSize),
+              bounds.topRight,
+              bounds.topRight.translate(-grid.cornerSize, 0),
+            ], false)
+            ..addPolygon([
+              bounds.bottomLeft.translate(0, -grid.cornerSize),
+              bounds.bottomLeft,
+              bounds.bottomLeft.translate(grid.cornerSize, 0),
+            ], false)
+            ..addPolygon([
+              bounds.bottomRight.translate(0, -grid.cornerSize),
+              bounds.bottomRight,
+              bounds.bottomRight.translate(-grid.cornerSize, 0),
+            ], false),
           Paint()
             ..color = grid.gridCornerColor
             ..style = PaintingStyle.stroke
@@ -84,10 +100,22 @@ class _CropGridPainter extends CustomPainter {
 
     canvas.drawPath(
         Path() //
-          ..addPolygon([bounds.topLeft.translate(grid.cornerSize, 0), bounds.topRight.translate(-grid.cornerSize, 0)], false)
-          ..addPolygon([bounds.bottomLeft.translate(grid.cornerSize, 0), bounds.bottomRight.translate(-grid.cornerSize, 0)], false)
-          ..addPolygon([bounds.topLeft.translate(0, grid.cornerSize), bounds.bottomLeft.translate(0, -grid.cornerSize)], false)
-          ..addPolygon([bounds.topRight.translate(0, grid.cornerSize), bounds.bottomRight.translate(0, -grid.cornerSize)], false),
+          ..addPolygon([
+            bounds.topLeft.translate(grid.cornerSize, 0),
+            bounds.topRight.translate(-grid.cornerSize, 0),
+          ], false)
+          ..addPolygon([
+            bounds.bottomLeft.translate(grid.cornerSize, 0),
+            bounds.bottomRight.translate(-grid.cornerSize, 0),
+          ], false)
+          ..addPolygon([
+            bounds.topLeft.translate(0, grid.cornerSize),
+            bounds.bottomLeft.translate(0, -grid.cornerSize),
+          ], false)
+          ..addPolygon([
+            bounds.topRight.translate(0, grid.cornerSize),
+            bounds.bottomRight.translate(0, -grid.cornerSize),
+          ], false),
         Paint()
           ..color = grid.gridColor
           ..style = PaintingStyle.stroke
@@ -100,10 +128,22 @@ class _CropGridPainter extends CustomPainter {
       final thirdWidth = bounds.width / 3.0;
       canvas.drawPath(
           Path() //
-            ..addPolygon([bounds.topLeft.translate(0, thirdHeight), bounds.topRight.translate(0, thirdHeight)], false)
-            ..addPolygon([bounds.bottomLeft.translate(0, -thirdHeight), bounds.bottomRight.translate(0, -thirdHeight)], false)
-            ..addPolygon([bounds.topLeft.translate(thirdWidth, 0), bounds.bottomLeft.translate(thirdWidth, 0)], false)
-            ..addPolygon([bounds.topRight.translate(-thirdWidth, 0), bounds.bottomRight.translate(-thirdWidth, 0)], false),
+            ..addPolygon([
+              bounds.topLeft.translate(0, thirdHeight),
+              bounds.topRight.translate(0, thirdHeight),
+            ], false)
+            ..addPolygon([
+              bounds.bottomLeft.translate(0, -thirdHeight),
+              bounds.bottomRight.translate(0, -thirdHeight),
+            ], false)
+            ..addPolygon([
+              bounds.topLeft.translate(thirdWidth, 0),
+              bounds.bottomLeft.translate(thirdWidth, 0),
+            ], false)
+            ..addPolygon([
+              bounds.topRight.translate(-thirdWidth, 0),
+              bounds.bottomRight.translate(-thirdWidth, 0),
+            ], false),
           Paint()
             ..color = grid.gridInnerColor
             ..style = PaintingStyle.stroke
