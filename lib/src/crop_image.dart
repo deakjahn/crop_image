@@ -112,8 +112,12 @@ class CropImage extends StatefulWidget {
   /// Could be used for special effects on the cropped area.
   final CustomPainter? overlayPainter;
 
+  /// A widget rendered when the image is not ready.
+  /// Default is const CircularProgressIndicator.adaptive()
+  final Widget loadingPlaceholder;
+
   const CropImage({
-    Key? key,
+    super.key,
     this.controller,
     required this.image,
     this.gridColor = Colors.white70,
@@ -132,6 +136,7 @@ class CropImage extends StatefulWidget {
     this.maximumImageSize = double.infinity,
     this.alwaysMove = false,
     this.overlayPainter,
+    this.loadingPlaceholder = const CircularProgressIndicator.adaptive(),
   })  : gridInnerColor = gridInnerColor ?? gridColor,
         gridCornerColor = gridCornerColor ?? gridColor,
         assert(gridCornerSize > 0, 'gridCornerSize cannot be zero'),
@@ -140,8 +145,7 @@ class CropImage extends StatefulWidget {
         assert(gridThickWidth > 0, 'gridThickWidth cannot be zero'),
         assert(minimumImageSize > 0, 'minimumImageSize cannot be zero'),
         assert(maximumImageSize >= minimumImageSize,
-            'maximumImageSize cannot be less than minimumImageSize'),
-        super(key: key);
+            'maximumImageSize cannot be less than minimumImageSize');
 
   @override
   State<CropImage> createState() => _CropImageState();
@@ -274,7 +278,7 @@ class _CropImageState extends State<CropImage> {
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             if (controller.getImage() == null) {
-              return const CircularProgressIndicator.adaptive();
+              return widget.loadingPlaceholder;
             }
             // we remove the borders
             final double maxWidth =
