@@ -73,6 +73,17 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: const Icon(Icons.rotate_90_degrees_cw_outlined),
             onPressed: _rotateRight,
           ),
+          IconButton(
+            icon: const Icon(Icons.flip),
+            onPressed: _flipHorizontal,
+          ),
+          IconButton(
+            icon: Transform.rotate(
+              angle: 90 * 3.14 / 180,
+              child: Icon(Icons.flip),
+            ),
+            onPressed: _flipVertical,
+          ),
           TextButton(
             onPressed: _finished,
             child: const Text('Done'),
@@ -125,6 +136,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _rotateLeft() async => controller.rotateLeft();
 
   Future<void> _rotateRight() async => controller.rotateRight();
+
+  Future<void> _flipHorizontal() async => controller.flipHorizontal();
+
+  Future<void> _flipVertical() async => controller.flipVertical();
 
   Future<void> _finished() async {
     final image = await controller.croppedImage();

@@ -9,6 +9,14 @@ enum CropRotation {
   left,
 }
 
+/// Flip Modes, normal, inverted horizontally and vertically
+enum FlipMode {
+  none,
+  vertical,
+  horizontal,
+  both
+}
+
 extension CropRotationExtension on CropRotation {
   /// Returns the rotation in radians cw.
   double get radians {
