@@ -275,14 +275,17 @@ class CropController extends ValueNotifier<CropControllerValue> {
       }
     }
 
-    final Offset cropCenter = rotation.getRotatedOffset(
+    Offset cropCenter = rotation.getRotatedOffset(
       crop.center,
+      flipMode,
       image.width.toDouble(),
       image.height.toDouble(),
     );
 
     final double alternateWidth = tilted ? cropHeight : cropWidth;
     final double alternateHeight = tilted ? cropWidth : cropHeight;
+
+   
     if (rotation != CropRotation.up) {
       canvas.save();
       final double x = alternateWidth / 2 * factor;
@@ -304,22 +307,26 @@ class CropController extends ValueNotifier<CropControllerValue> {
       }
     }
 
-    switch(flipMode){
+     switch(flipMode){
       case FlipMode.horizontal:
         canvas.scale(-1,1);
         canvas.translate(-alternateWidth, 0);
+        cropCenter = Offset(0 + image.width.toDouble() - cropCenter.dx,cropCenter.dy);
         break;
-      case FlipMode.none:
+      case FlipMode.none: 
         break;
       case FlipMode.vertical:
         canvas.scale(1,-1);
         canvas.translate(0, -alternateHeight);
+        cropCenter = Offset(cropCenter.dx, 0 + image.height.toDouble() - cropCenter.dy);
         break;
       case FlipMode.both:
         canvas.scale(-1,-1);
         canvas.translate(-alternateWidth, -alternateHeight);
+        cropCenter = Offset(0 + image.width.toDouble() - cropCenter.dx, 0 + image.height.toDouble() - cropCenter.dy);
         break;
     }
+
 
     canvas.drawImageRect(
       image,

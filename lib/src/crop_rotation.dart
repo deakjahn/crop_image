@@ -98,6 +98,7 @@ extension CropRotationExtension on CropRotation {
   /// Returns the offset as rotated.
   Offset getRotatedOffset(
     final Offset offset01,
+    final FlipMode flipMode,
     final double straightWidth,
     final double straightHeight,
   ) {
