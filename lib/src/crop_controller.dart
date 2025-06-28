@@ -311,19 +311,19 @@ class CropController extends ValueNotifier<CropControllerValue> {
       case FlipMode.horizontal:
         canvas.scale(-1,1);
         canvas.translate(-alternateWidth, 0);
-        cropCenter = Offset(0 + image.width.toDouble() - cropCenter.dx,cropCenter.dy);
+        cropCenter = Offset(image.width.toDouble() - cropCenter.dx,cropCenter.dy);
         break;
       case FlipMode.none: 
         break;
       case FlipMode.vertical:
         canvas.scale(1,-1);
         canvas.translate(0, -alternateHeight);
-        cropCenter = Offset(cropCenter.dx, 0 + image.height.toDouble() - cropCenter.dy);
+        cropCenter = Offset(cropCenter.dx, image.height.toDouble() - cropCenter.dy);
         break;
       case FlipMode.both:
         canvas.scale(-1,-1);
         canvas.translate(-alternateWidth, -alternateHeight);
-        cropCenter = Offset(0 + image.width.toDouble() - cropCenter.dx, 0 + image.height.toDouble() - cropCenter.dy);
+        cropCenter = Offset(image.width.toDouble() - cropCenter.dx, image.height.toDouble() - cropCenter.dy);
         break;
     }
 
