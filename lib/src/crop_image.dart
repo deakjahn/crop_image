@@ -112,6 +112,11 @@ class CropImage extends StatefulWidget {
   /// Could be used for special effects on the cropped area.
   final CustomPainter? overlayPainter;
 
+  /// An optional widget between the image and the crop grid.
+  ///
+  /// Can be used to display any kind of widget on top of the image.
+  final Widget? overlayWidget;
+
   /// A widget rendered when the image is not ready.
   /// Default is const CircularProgressIndicator.adaptive()
   final Widget loadingPlaceholder;
@@ -136,6 +141,7 @@ class CropImage extends StatefulWidget {
     this.maximumImageSize = double.infinity,
     this.alwaysMove = false,
     this.overlayPainter,
+    this.overlayWidget,
     this.loadingPlaceholder = const CircularProgressIndicator.adaptive(),
   })  : gridInnerColor = gridInnerColor ?? gridColor,
         gridCornerColor = gridCornerColor ?? gridColor,
@@ -285,6 +291,12 @@ class _CropImageState extends State<CropImage> {
                     width: width,
                     height: height,
                     child: CustomPaint(painter: widget.overlayPainter),
+                  ),
+                if (widget.overlayWidget != null)
+                  SizedBox(
+                    width: width,
+                    height: height,
+                    child: widget.overlayWidget,
                   ),
                 SizedBox(
                   width: width + 2 * widget.paddingSize,
