@@ -15,10 +15,21 @@ class CropController extends ValueNotifier<CropControllerValue> {
 
   set aspectRatio(double? newAspectRatio) {
     if (newAspectRatio != null) {
-      value = value.copyWith(
-        aspectRatio: newAspectRatio,
-        crop: _adjustRatio(value.crop, newAspectRatio),
-      );
+      // If the aspect ratio actually changed (or was previously null) reset the crop
+      // to the widest possible centered rectangle available for the new ratio.
+      // Otherwise (e.g. aspect ratio is the same but image/bitmap changed) just
+      // adjust the current crop to the bitmap/rotation constraints.
+      if (value.aspectRatio == null || value.aspectRatio != newAspectRatio) {
+        value = value.copyWith(
+          aspectRatio: newAspectRatio,
+          crop: _adjustRatio(value.crop, newAspectRatio, rotation: value.rotation),
+        );
+      } else {
+        value = value.copyWith(
+          aspectRatio: newAspectRatio,
+          crop: _adjustRatio(value.crop, newAspectRatio),
+        );
+      }
     } else {
       value = CropControllerValue(
         null,
