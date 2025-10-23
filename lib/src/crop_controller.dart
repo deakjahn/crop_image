@@ -185,33 +185,7 @@ class CropController extends ValueNotifier<CropControllerValue> {
         result = Rect.fromLTWH(crop.left, crop.center.dy - h / 2, crop.width, h);
       }
     }
- 
-    // Enforce minimum image size (in pixels) while preserving aspect ratio.
-    // Simpler behavior: when smaller than minimum, scale up but keep the crop centered.
-    final double minSize = value.minimumImageSize;
-    if (minSize > 0) {
-      double pixelW = result.width * bitmapWidth;
-      double pixelH = result.height * bitmapHeight;
-      if (pixelW < minSize || pixelH < minSize) {
-        // Desired scale to reach minimum for both dimensions.
-        final double desiredScale = math.max(minSize / pixelW, minSize / pixelH);
-        // Do not exceed bitmap bounds.
-        final double maxScale = math.min(bitmapWidth / pixelW, bitmapHeight / pixelH);
-        final double scale = math.max(1.0, math.min(desiredScale, maxScale));
-        if (scale > 1.0 && pixelW > 0 && pixelH > 0) {
-          final double newPixelW = (pixelW * scale).clamp(0.0, bitmapWidth);
-          final double newPixelH = (pixelH * scale).clamp(0.0, bitmapHeight);
-          final double newWNorm = newPixelW / bitmapWidth;
-          final double newHNorm = newPixelH / bitmapHeight;
-          // Center the new rect around the previous center and keep it within 0..1 range.
-          final Offset center = result.center;
-          double left = (center.dx - newWNorm / 2).clamp(0.0, 1.0 - newWNorm);
-          double top = (center.dy - newHNorm / 2).clamp(0.0, 1.0 - newHNorm);
-          result = Rect.fromLTWH(left, top, newWNorm, newHNorm);
-        }
-      }
-    }
- 
+
     return result;
   }
 
