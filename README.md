@@ -30,6 +30,9 @@ CropImage(
   gridCornerColor: Colors.white,
   /// The size of the corner of the crop grid. Defaults to 25.
   gridCornerSize: 50,
+  /// The offset of the corner handles from the crop grid edges. 
+  /// Positive values move corners outside. Defaults to 0.
+  cornerOffset: 10,
   /// Whether to display the corners. Defaults to true.
   showCorners: true,
   /// The width of the crop grid thin lines. Defaults to 2.

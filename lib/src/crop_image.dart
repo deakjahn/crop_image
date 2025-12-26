@@ -54,6 +54,11 @@ class CropImage extends StatefulWidget {
   /// Defaults to 25.
   final double gridCornerSize;
 
+  /// The offset of the corner handles from the crop grid edges.
+  ///
+  /// Positive values move the corners outside the grid. Defaults to 0.
+  final double cornerOffset;
+
   /// Whether to display the corners.
   ///
   /// Defaults to true.
@@ -112,6 +117,11 @@ class CropImage extends StatefulWidget {
   /// Could be used for special effects on the cropped area.
   final CustomPainter? overlayPainter;
 
+  /// An optional widget between the image and the crop grid.
+  ///
+  /// Can be used to display any kind of widget on top of the image.
+  final Widget? overlayWidget;
+
   /// A widget rendered when the image is not ready.
   /// Default is const CircularProgressIndicator.adaptive()
   final Widget loadingPlaceholder;
@@ -126,6 +136,7 @@ class CropImage extends StatefulWidget {
     this.paddingSize = 0,
     this.touchSize = 50,
     this.gridCornerSize = 25,
+    this.cornerOffset = 0,
     this.showCorners = true,
     this.gridThinWidth = 2,
     this.gridThickWidth = 5,
@@ -136,6 +147,7 @@ class CropImage extends StatefulWidget {
     this.maximumImageSize = double.infinity,
     this.alwaysMove = false,
     this.overlayPainter,
+    this.overlayWidget,
     this.loadingPlaceholder = const CircularProgressIndicator.adaptive(),
   })  : gridInnerColor = gridInnerColor ?? gridColor,
         gridCornerColor = gridCornerColor ?? gridColor,
@@ -144,7 +156,8 @@ class CropImage extends StatefulWidget {
         assert(gridThinWidth > 0, 'gridThinWidth cannot be zero'),
         assert(gridThickWidth > 0, 'gridThickWidth cannot be zero'),
         assert(minimumImageSize > 0, 'minimumImageSize cannot be zero'),
-        assert(maximumImageSize >= minimumImageSize, 'maximumImageSize cannot be less than minimumImageSize');
+        assert(maximumImageSize >= minimumImageSize, 'maximumImageSize cannot be less than minimumImageSize'),
+        assert(cornerOffset >= 0, 'cornerOffset cannot be negative');
 
   @override
   State<CropImage> createState() => _CropImageState();
@@ -161,6 +174,7 @@ class CropImage extends StatefulWidget {
     properties.add(DiagnosticsProperty<double>('paddingSize', paddingSize));
     properties.add(DiagnosticsProperty<double>('touchSize', touchSize));
     properties.add(DiagnosticsProperty<double>('gridCornerSize', gridCornerSize));
+    properties.add(DiagnosticsProperty<double>('cornerOffset', cornerOffset));
     properties.add(DiagnosticsProperty<bool>('showCorners', showCorners));
     properties.add(DiagnosticsProperty<double>('gridThinWidth', gridThinWidth));
     properties.add(DiagnosticsProperty<double>('gridThickWidth', gridThickWidth));
@@ -184,10 +198,10 @@ class _CropImageState extends State<CropImage> {
   _TouchPoint? panStart;
 
   Map<_CornerTypes, Offset> get gridCorners => <_CornerTypes, Offset>{
-        _CornerTypes.UpperLeft: controller.crop.topLeft.scale(size.width, size.height).translate(widget.paddingSize, widget.paddingSize),
-        _CornerTypes.UpperRight: controller.crop.topRight.scale(size.width, size.height).translate(widget.paddingSize, widget.paddingSize),
-        _CornerTypes.LowerRight: controller.crop.bottomRight.scale(size.width, size.height).translate(widget.paddingSize, widget.paddingSize),
-        _CornerTypes.LowerLeft: controller.crop.bottomLeft.scale(size.width, size.height).translate(widget.paddingSize, widget.paddingSize),
+        _CornerTypes.UpperLeft: controller.crop.topLeft.scale(size.width, size.height).translate(widget.paddingSize - widget.cornerOffset, widget.paddingSize - widget.cornerOffset),
+        _CornerTypes.UpperRight: controller.crop.topRight.scale(size.width, size.height).translate(widget.paddingSize + widget.cornerOffset, widget.paddingSize - widget.cornerOffset),
+        _CornerTypes.LowerRight: controller.crop.bottomRight.scale(size.width, size.height).translate(widget.paddingSize + widget.cornerOffset, widget.paddingSize + widget.cornerOffset),
+        _CornerTypes.LowerLeft: controller.crop.bottomLeft.scale(size.width, size.height).translate(widget.paddingSize - widget.cornerOffset, widget.paddingSize + widget.cornerOffset),
       };
 
   @override
@@ -286,6 +300,12 @@ class _CropImageState extends State<CropImage> {
                     height: height,
                     child: CustomPaint(painter: widget.overlayPainter),
                   ),
+                if (widget.overlayWidget != null)
+                  SizedBox(
+                    width: width,
+                    height: height,
+                    child: widget.overlayWidget,
+                  ),
                 SizedBox(
                   width: width + 2 * widget.paddingSize,
                   height: height + 2 * widget.paddingSize,
@@ -300,6 +320,7 @@ class _CropImageState extends State<CropImage> {
                       gridCornerColor: widget.gridCornerColor,
                       paddingSize: widget.paddingSize,
                       cornerSize: showCorners ? widget.gridCornerSize : 0,
+                      cornerOffset: widget.cornerOffset,
                       thinWidth: widget.gridThinWidth,
                       thickWidth: widget.gridThickWidth,
                       scrimColor: widget.scrimColor,
@@ -372,9 +393,11 @@ class _CropImageState extends State<CropImage> {
 
   void moveArea(Offset point) {
     final crop = controller.crop.multiply(size);
+    final maxX = math.max(0.0, size.width - crop.width);
+    final maxY = math.max(0.0, size.height - crop.height);
     controller.crop = Rect.fromLTWH(
-      point.dx.clamp(0, size.width - crop.width),
-      point.dy.clamp(0, size.height - crop.height),
+      point.dx.clamp(0.0, maxX),
+      point.dy.clamp(0.0, maxY),
       crop.width,
       crop.height,
     ).divide(size);

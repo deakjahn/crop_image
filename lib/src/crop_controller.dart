@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'crop_rect.dart';
@@ -15,10 +16,21 @@ class CropController extends ValueNotifier<CropControllerValue> {
 
   set aspectRatio(double? newAspectRatio) {
     if (newAspectRatio != null) {
-      value = value.copyWith(
-        aspectRatio: newAspectRatio,
-        crop: _adjustRatio(value.crop, newAspectRatio),
-      );
+      // If the aspect ratio actually changed (or was previously null) reset the crop
+      // to the widest possible centered rectangle available for the new ratio.
+      // Otherwise (e.g. aspect ratio is the same but image/bitmap changed) just
+      // adjust the current crop to the bitmap/rotation constraints.
+      if (value.aspectRatio == null || value.aspectRatio != newAspectRatio) {
+        value = value.copyWith(
+          aspectRatio: newAspectRatio,
+          crop: _adjustRatio(value.crop, newAspectRatio, rotation: value.rotation),
+        );
+      } else {
+        value = value.copyWith(
+          aspectRatio: newAspectRatio,
+          crop: _adjustRatio(value.crop, newAspectRatio),
+        );
+      }
     } else {
       value = CropControllerValue(
         null,
@@ -149,6 +161,7 @@ class CropController extends ValueNotifier<CropControllerValue> {
     rotation ??= value.rotation;
     final bitmapWidth = rotation.isSideways ? _bitmapSize.height : _bitmapSize.width;
     final bitmapHeight = rotation.isSideways ? _bitmapSize.width : _bitmapSize.height;
+    var result = crop;
     if (justRotated) {
       // we've just rotated: in that case, biggest centered crop.
       const center = Offset(.5, .5);
@@ -156,20 +169,24 @@ class CropController extends ValueNotifier<CropControllerValue> {
       final height = bitmapHeight;
       if (width / height > aspectRatio) {
         final w = height * aspectRatio / bitmapWidth;
-        return Rect.fromCenter(center: center, width: w, height: 1);
+        result = Rect.fromCenter(center: center, width: w, height: 1);
+      } else {
+        final h = width / aspectRatio / bitmapHeight;
+        result = Rect.fromCenter(center: center, width: 1, height: h);
       }
-      final h = width / aspectRatio / bitmapHeight;
-      return Rect.fromCenter(center: center, width: 1, height: h);
-    }
-    final width = crop.width * bitmapWidth;
-    final height = crop.height * bitmapHeight;
-    if (width / height > aspectRatio) {
-      final w = height * aspectRatio / bitmapWidth;
-      return Rect.fromLTWH(crop.center.dx - w / 2, crop.top, w, crop.height);
     } else {
-      final h = width / aspectRatio / bitmapHeight;
-      return Rect.fromLTWH(crop.left, crop.center.dy - h / 2, crop.width, h);
+      final width = crop.width * bitmapWidth;
+      final height = crop.height * bitmapHeight;
+      if (width / height > aspectRatio) {
+        final w = height * aspectRatio / bitmapWidth;
+        result = Rect.fromLTWH(crop.center.dx - w / 2, crop.top, w, crop.height);
+      } else {
+        final h = width / aspectRatio / bitmapHeight;
+        result = Rect.fromLTWH(crop.left, crop.center.dy - h / 2, crop.width, h);
+      }
     }
+
+    return result;
   }
 
   /// Returns the bitmap cropped with the current crop rectangle.
