@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.17] - 2025-12-26
+
+* Implement [#63](https://github.com/deakjahn/crop_image/pull/63).
+
 ## [1.0.16] - 2025-02-26
 
 * Implement [#54](https://github.com/deakjahn/crop_image/issues/54).

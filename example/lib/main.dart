@@ -39,16 +39,10 @@ class _MyHomePageState extends State<MyHomePage> {
         body: Center(
           child: CropImage(
             controller: controller,
-            alwaysMove: true,
-            showCorners: true,
-            touchSize: 50,
-            gridInnerColor: Colors.white54,
-            gridThinWidth: 2.0,
-            gridCornerColor: Colors.blue,
-            alwaysShowThirdLines: true,
             image: Image.asset('assets/08272011229.jpg'),
             paddingSize: 25.0,
-            cornerOffset: 10,
+            alwaysMove: true,
+            maximumImageSize: 500,
           ),
         ),
         bottomNavigationBar: _buildButtons(),
