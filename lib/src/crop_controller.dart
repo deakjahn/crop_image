@@ -4,6 +4,7 @@ import 'crop_rect.dart';
 import 'crop_rotation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
 /// A controller to control the functionality of [CropImage].
 class CropController extends ValueNotifier<CropControllerValue> {
@@ -24,6 +25,7 @@ class CropController extends ValueNotifier<CropControllerValue> {
         null,
         value.crop,
         value.rotation,
+        value.flipMode,
         value.minimumImageSize,
       );
     }
@@ -54,9 +56,31 @@ class CropController extends ValueNotifier<CropControllerValue> {
     notifyListeners();
   }
 
+  FlipMode get flipMode => value.flipMode;
+
+  set flipMode(FlipMode flipMode) {
+    value = value.copyWith(flipMode: flipMode);
+    notifyListeners();
+  }
+
   void rotateRight() => _rotate(left: false);
 
   void rotateLeft() => _rotate(left: true);
+
+  void flipVertical() => _flip(horizontally: false);
+
+  void flipHorizontal() => _flip(horizontally: true);
+
+  void _flip({required final bool horizontally}) {
+    value = CropControllerValue(
+      value.aspectRatio,
+      value.crop,
+      value.rotation,
+      _adjustFlipMode(horizontally),
+      value.minimumImageSize,
+    );
+    notifyListeners();
+  }
 
   void _rotate({required final bool left}) {
     final CropRotation newRotation = left ? value.rotation.rotateLeft : value.rotation.rotateRight;
@@ -73,6 +97,7 @@ class CropController extends ValueNotifier<CropControllerValue> {
         rotation: newRotation,
       ),
       newRotation,
+      value.flipMode,
       value.minimumImageSize,
     );
     notifyListeners();
@@ -119,6 +144,7 @@ class CropController extends ValueNotifier<CropControllerValue> {
     double? aspectRatio,
     Rect defaultCrop = const Rect.fromLTWH(0, 0, 1, 1),
     CropRotation rotation = CropRotation.up,
+    FlipMode flipMode = FlipMode.none,
     double minimumImageSize = 100,
   })  : assert(aspectRatio != 0, 'aspectRatio cannot be zero'),
         assert(defaultCrop.left >= 0 && defaultCrop.left <= 1, 'left should be 0..1'),
@@ -131,11 +157,25 @@ class CropController extends ValueNotifier<CropControllerValue> {
           aspectRatio,
           defaultCrop,
           rotation,
+          flipMode,
           minimumImageSize,
         ));
 
   /// Creates a controller for a [CropImage] widget from an initial [CropControllerValue].
   CropController.fromValue(super.value);
+
+  FlipMode _adjustFlipMode(bool horizontally) {
+    switch (value.flipMode){
+        case FlipMode.none:
+          return horizontally ? FlipMode.horizontal : FlipMode.vertical;
+        case FlipMode.horizontal:
+          return horizontally ? FlipMode.none : FlipMode.both;
+        case FlipMode.vertical:
+          return horizontally ? FlipMode.both : FlipMode.none;
+        case FlipMode.both:
+          return horizontally ? FlipMode.vertical : FlipMode.horizontal;
+      }
+  }
 
   Rect _adjustRatio(
     Rect crop,
@@ -189,6 +229,7 @@ class CropController extends ValueNotifier<CropControllerValue> {
         quality: quality,
         crop: crop,
         rotation: value.rotation,
+        flipMode: value.flipMode,
         image: _bitmap!,
         overlayPainter: overlayPainter,
       );
@@ -205,6 +246,7 @@ class CropController extends ValueNotifier<CropControllerValue> {
     final ui.FilterQuality quality = FilterQuality.high,
     required final Rect crop,
     required final CropRotation rotation,
+    required final FlipMode flipMode,
     required final ui.Image image,
     final CustomPainter? overlayPainter,
   }) async {
@@ -233,14 +275,17 @@ class CropController extends ValueNotifier<CropControllerValue> {
       }
     }
 
-    final Offset cropCenter = rotation.getRotatedOffset(
+    Offset cropCenter = rotation.getRotatedOffset(
       crop.center,
+      flipMode,
       image.width.toDouble(),
       image.height.toDouble(),
     );
 
     final double alternateWidth = tilted ? cropHeight : cropWidth;
     final double alternateHeight = tilted ? cropWidth : cropHeight;
+
+   
     if (rotation != CropRotation.up) {
       canvas.save();
       final double x = alternateWidth / 2 * factor;
@@ -261,6 +306,27 @@ class CropController extends ValueNotifier<CropControllerValue> {
         canvas.translate(-x, -y);
       }
     }
+
+     switch(flipMode){
+      case FlipMode.horizontal:
+        canvas.scale(-1,1);
+        canvas.translate(-alternateWidth, 0);
+        cropCenter = Offset(image.width.toDouble() - cropCenter.dx,cropCenter.dy);
+        break;
+      case FlipMode.none: 
+        break;
+      case FlipMode.vertical:
+        canvas.scale(1,-1);
+        canvas.translate(0, -alternateHeight);
+        cropCenter = Offset(cropCenter.dx, image.height.toDouble() - cropCenter.dy);
+        break;
+      case FlipMode.both:
+        canvas.scale(-1,-1);
+        canvas.translate(-alternateWidth, -alternateHeight);
+        cropCenter = Offset(image.width.toDouble() - cropCenter.dx, image.height.toDouble() - cropCenter.dy);
+        break;
+    }
+
 
     canvas.drawImageRect(
       image,
@@ -320,12 +386,14 @@ class CropControllerValue {
   final double? aspectRatio;
   final Rect crop;
   final CropRotation rotation;
+  final FlipMode flipMode;
   final double minimumImageSize;
 
   const CropControllerValue(
     this.aspectRatio,
     this.crop,
     this.rotation,
+    this.flipMode,
     this.minimumImageSize,
   );
 
@@ -333,12 +401,14 @@ class CropControllerValue {
     double? aspectRatio,
     Rect? crop,
     CropRotation? rotation,
+    FlipMode? flipMode,
     double? minimumImageSize,
   }) =>
       CropControllerValue(
         aspectRatio ?? this.aspectRatio,
         crop ?? this.crop,
         rotation ?? this.rotation,
+        flipMode ?? this.flipMode,
         minimumImageSize ?? this.minimumImageSize,
       );
 
@@ -347,7 +417,7 @@ class CropControllerValue {
     if (identical(this, other)) {
       return true;
     }
-    return other is CropControllerValue && other.aspectRatio == aspectRatio && other.crop == crop && other.rotation == rotation && other.minimumImageSize == minimumImageSize;
+    return other is CropControllerValue && other.aspectRatio == aspectRatio && other.crop == crop && other.rotation == rotation && other.flipMode == flipMode && other.minimumImageSize == minimumImageSize;
   }
 
   @override
@@ -355,6 +425,7 @@ class CropControllerValue {
         aspectRatio.hashCode,
         crop.hashCode,
         rotation.hashCode,
+        flipMode.hashCode,
         minimumImageSize.hashCode,
       );
 }

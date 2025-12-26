@@ -291,6 +291,7 @@ class _CropImageState extends State<CropImage> {
                     painter: _RotatedImagePainter(
                       controller.getImage()!,
                       controller.rotation,
+                      controller.flipMode
                     ),
                   ),
                 ),
@@ -511,10 +512,11 @@ class _TouchPoint {
 
 // FIXME: shouldn't be repainted each time the grid moves, should it?
 class _RotatedImagePainter extends CustomPainter {
-  _RotatedImagePainter(this.image, this.rotation);
+  _RotatedImagePainter(this.image, this.rotation, this.flipMode);
 
   final ui.Image image;
   final CropRotation rotation;
+  final FlipMode flipMode;
 
   final Paint _paint = Paint();
 
@@ -538,16 +540,39 @@ class _RotatedImagePainter extends CustomPainter {
       canvas.rotate(rotation.radians);
       canvas.translate(-targetWidth / 2, -targetHeight / 2);
     }
+
+    switch(flipMode){
+      case FlipMode.horizontal:
+        canvas.scale(-1,1);
+        canvas.translate(-targetWidth - offset, offset);
+        break;
+      case FlipMode.none:
+        canvas.translate(offset, offset);
+        break;
+      case FlipMode.vertical:
+        canvas.scale(1,-1);
+        canvas.translate(offset, -targetHeight - offset);
+        break;
+      case FlipMode.both:
+        canvas.scale(-1,-1);
+        canvas.translate(-targetWidth - offset, -targetHeight - offset);
+        break;
+    }
+
     _paint.filterQuality = FilterQuality.high;
     canvas.drawImageRect(
       image,
       Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
-      Rect.fromLTWH(offset, offset, targetWidth, targetHeight),
+      Rect.fromLTWH(0, 0, targetWidth, targetHeight),
       _paint,
     );
+
     if (rotation != CropRotation.up) {
       canvas.restore();
     }
+
+   
+    
   }
 
   @override
